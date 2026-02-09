@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'SaaS Factory App',
-  description: 'Built with SaaS Factory',
+  title: 'Ceramdent | Laboratorio Dental Digital',
+  description: 'Gestión inteligente para laboratorios dentales de alto nivel.',
 }
 
 export default function RootLayout({

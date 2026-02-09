@@ -3,65 +3,69 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 15, 23, 42;
+  --foreground-rgb: 248, 250, 252;
+  /* Slate-50 */
   --ceramdent-fucsia: #E30052;
-  --ceramdent-navy: #0F172A;
+  --ceramdent-blue: #3B82F6;
+  --ceramdent-bg: #030712;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  /* Liquid Glass Background: Soft Slate with dynamic blobs implied by gradient */
-  background:
-    radial-gradient(at 0% 0%, hsla(339, 100%, 45%, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(222, 47%, 11%, 0.1) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, hsla(339, 100%, 45%, 0.05) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(222, 47%, 11%, 0.1) 0px, transparent 50%),
-    #f1f5f9;
-  /* Slate-100 fallback */
+  background-color: var(--ceramdent-bg) !important;
+  background-image:
+    radial-gradient(at 0% 0%, hsla(339, 100%, 45%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(217, 91%, 60%, 0.1) 0px, transparent 50%);
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
 
-/* 
-  Liquid Glass Effect 
-  Based on Apple/FlyonUI principles:
-  - High transparency (bg-opacity-60 to 80)
-  - Strong Blur (backdrop-filter)
-  - Subtle white borders
-  - Deep, soft shadows
-*/
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
-    0 10px 40px -10px rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-}
-
-.liquid-glass-dark {
-  background: rgba(15, 23, 42, 0.85);
-  /* Navy */
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-.glass-input {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(203, 213, 225, 0.6);
-  /* Slate-300 */
-  backdrop-filter: blur(4px);
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
 }
 
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: #E30052;
-  /* Ceramdent Fucsia */
-  box-shadow: 0 0 0 3px rgba(227, 0, 82, 0.1);
-  outline: none;
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.glass-button-fucsia {
+  background: linear-gradient(135deg, #E30052 0%, #B90042 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(227, 0, 82, 0.4);
+  transition: all 0.3s ease;
+}
+
+.glass-button-fucsia:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(227, 0, 82, 0.6);
+}
+
+.glass-sidebar {
+  background: rgba(3, 7, 18, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glow-fucsia {
+  box-shadow: 0 0 20px rgba(227, 0, 82, 0.2);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
 }

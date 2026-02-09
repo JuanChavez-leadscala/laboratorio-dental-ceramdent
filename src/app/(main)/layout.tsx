@@ -1,4 +1,4 @@
-import { Navbar } from '@/shared/components/Navbar'
+import { Sidebar } from '@/shared/components/layout/sidebar'
 
 export default function MainLayout({
   children,
@@ -6,10 +6,12 @@ export default function MainLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-base-200">
-      <Navbar />
-      <main className="container mx-auto p-4">
-        {children}
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <main className="flex-1 lg:ml-64 p-4 lg:p-8 pt-20 lg:pt-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
       </main>
     </div>
   )

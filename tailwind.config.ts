@@ -1,5 +1,7 @@
 import type { Config } from 'tailwindcss'
 
+// Force Vercel Rebuild: Liquid Glass v2
+
 const config: Config = {
   content: [
     './src/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,7 +11,8 @@ const config: Config = {
       colors: {
         ceramdent: {
           fucsia: '#E30052',
-          navy: '#0F172A',
+          blue: '#3B82F6', // Modern Blue for accents
+          navy: '#030712', // Background color (Almost black)
         }
       }
     },
@@ -20,13 +23,16 @@ const config: Config = {
       {
         ceramdent: {
           "primary": "#E30052",
-          "secondary": "#0F172A",
-          "accent": "#10b981",
-          "neutral": "#3d4451",
-          "base-100": "#ffffff",
+          "secondary": "#3B82F6",
+          "accent": "#F472B6",
+          "neutral": "#1F2937",
+          "base-100": "#030712",
+          "info": "#3B82F6",
+          "success": "#10B981",
+          "warning": "#F59E0B",
+          "error": "#EF4444",
         },
       },
-      "light",
     ],
   },
 }

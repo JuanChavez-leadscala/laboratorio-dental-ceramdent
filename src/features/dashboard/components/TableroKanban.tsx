@@ -94,83 +94,85 @@ export function TableroKanban() {
             w-[85vw] md:w-auto 
             snap-center 
             glass-panel
-            rounded-2xl 
-            p-4 
+            bg-white/[0.02]
+            rounded-3xl 
+            p-5 
             flex flex-col 
-            shadow-sm
+            border border-white/5
             h-full
           ">
 
                         {/* Column Header */}
-                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50">
-                            <h3 className={`font-bold text-sm tracking-wide ${column === 'Listo para Entrega' ? 'text-emerald-600' : 'text-slate-600'
+                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
+                            <h3 className={`font-bold text-xs uppercase tracking-widest ${column === 'Listo para Entrega' ? 'text-emerald-400' : 'text-white/60'
                                 }`}>{column}</h3>
                             <span className="
-                px-2.5 py-0.5 
-                rounded-full 
-                bg-white/60 
-                text-xs font-bold text-slate-500 
-                shadow-sm border border-white/50
+                px-2.5 py-1
+                rounded-lg 
+                bg-white/5 
+                text-[10px] font-bold text-white/40 
+                border border-white/10
               ">
                                 {ordenes.filter(o => o.estado === column).length}
                             </span>
                         </div>
 
                         {/* Orders List */}
-                        <div className="flex-1 space-y-3 overflow-y-auto pr-1 max-h-[600px] md:max-h-none scrollbar-hide">
+                        <div className="flex-1 space-y-4 overflow-y-auto pr-1 max-h-[600px] md:max-h-none scrollbar-hide">
                             {ordenes.filter(o => o.estado === column).map(orden => (
                                 <div key={orden.id} className="
                   relative 
-                  bg-white/80 hover:bg-white 
-                  backdrop-blur-sm 
-                  border border-white/60 
-                  hover:border-[#E30052]/30
-                  p-4 rounded-xl 
-                  shadow-sm hover:shadow-md hover:shadow-[#E30052]/5
+                  glass-card
+                  bg-white/[0.03] hover:bg-white/[0.06]
+                  border border-white/5 
+                  hover:border-ceramdent-fucsia/30
+                  p-5 rounded-2xl 
                   transition-all duration-300 ease-out 
                   group
                   cursor-default
                 ">
 
                                     {/* Card Top: ID & Balance */}
-                                    <div className="flex justify-between items-start mb-3">
-                                        <span className="font-mono text-[10px] font-bold text-slate-400 tracking-wider">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="font-mono text-[9px] font-bold text-white/30 tracking-widest uppercase">
                                             {orden.codigo_rastreo}
                                         </span>
                                         {orden.saldo_pendiente > 0 ? (
-                                            <span className="text-[10px] font-bold text-[#E30052] bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-full">
+                                            <span className="text-[10px] font-bold text-ceramdent-fucsia bg-ceramdent-fucsia/10 border border-ceramdent-fucsia/20 px-2 py-0.5 rounded-full">
                                                 -${orden.saldo_pendiente}
                                             </span>
                                         ) : (
-                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">
                                                 Pagado
                                             </span>
                                         )}
                                     </div>
 
                                     {/* Clinic Info */}
-                                    <div className="flex items-center gap-2 mb-2 text-slate-700">
-                                        <UserCircle className="w-4 h-4 text-slate-400" />
+                                    <div className="flex items-center gap-2 mb-3 text-white">
+                                        <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+                                            <UserCircle className="w-4 h-4 text-white/40" />
+                                        </div>
                                         {/* @ts-ignore */}
-                                        <span className="text-sm font-semibold truncate">{orden.clinica?.nombre || 'Clínica desconocida'}</span>
+                                        <span className="text-sm font-bold truncate tracking-tight">{orden.clinica?.nombre || 'Clínica desconocida'}</span>
                                     </div>
 
                                     {/* Description */}
-                                    <p className="text-xs text-slate-500 mb-4 line-clamp-2 leading-relaxed">
+                                    <p className="text-xs text-white/40 mb-5 line-clamp-2 leading-relaxed">
                                         {orden.descripcion}
                                     </p>
 
                                     {/* Footer: Date & Actions */}
-                                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                                        <span className="text-[10px] text-slate-400 font-medium bg-slate-50/50 px-2 py-1 rounded-md">
+                                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                        <span className="text-[10px] text-white/30 font-bold uppercase tracking-tighter">
                                             {new Date(orden.fecha_entrega).toLocaleDateString()}
                                         </span>
 
-                                        <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <div className="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                             {/* Action: Cobrar */}
                                             {orden.saldo_pendiente > 0 && (
                                                 <button
-                                                    className="bg-[#E30052]/5 hover:bg-[#E30052]/10 text-[#E30052] p-1.5 rounded-full transition-colors"
+                                                    className="bg-ceramdent-fucsia/10 hover:bg-ceramdent-fucsia/20 text-ceramdent-fucsia p-1.5 rounded-lg border border-ceramdent-fucsia/20 transition-all glow-fucsia"
                                                     title="Registrar Pago"
                                                     onClick={() => setSelectedOrder(orden)}
                                                 >
@@ -181,7 +183,7 @@ export function TableroKanban() {
                                             {/* Action: Move Next */}
                                             {column !== 'Entregado' && (
                                                 <button
-                                                    className="bg-blue-50 hover:bg-blue-100 text-blue-600 p-1.5 rounded-full transition-colors"
+                                                    className="bg-ceramdent-blue/10 hover:bg-ceramdent-blue/20 text-ceramdent-blue p-1.5 rounded-lg border border-ceramdent-blue/20 transition-all glow-blue"
                                                     title="Avanzar Estado"
                                                     onClick={() => {
                                                         const nextIdx = COLUMNS.indexOf(column) + 1
