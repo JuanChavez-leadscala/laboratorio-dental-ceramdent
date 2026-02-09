@@ -4,58 +4,64 @@
 
 :root {
   --foreground-rgb: 15, 23, 42;
-  /* Slate 900 */
-  --background-start-rgb: 248, 250, 252;
-  --background-end-rgb: 255, 255, 255;
-
-  /* Ceramdent Identity */
   --ceramdent-fucsia: #E30052;
   --ceramdent-navy: #0F172A;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  /* Premium Soft Gradient Background */
+  /* Liquid Glass Background: Soft Slate with dynamic blobs implied by gradient */
   background:
-    radial-gradient(circle at 0% 0%, rgba(227, 0, 82, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 100% 100%, rgba(15, 23, 42, 0.03) 0%, transparent 50%),
-    linear-gradient(to bottom right, #f8fafc, #ffffff, #f1f5f9);
+    radial-gradient(at 0% 0%, hsla(339, 100%, 45%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(222, 47%, 11%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(339, 100%, 45%, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(222, 47%, 11%, 0.1) 0px, transparent 50%),
+    #f1f5f9;
+  /* Slate-100 fallback */
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Glassmorphism Utilities - Premium Apple Style */
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px -1px rgba(0, 0, 0, 0.02),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-}
-
-.glass-panel {
-  background-color: rgba(255, 255, 255, 0.4);
+/* 
+  Liquid Glass Effect 
+  Based on Apple/FlyonUI principles:
+  - High transparency (bg-opacity-60 to 80)
+  - Strong Blur (backdrop-filter)
+  - Subtle white borders
+  - Deep, soft shadows
+*/
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 10px 40px -10px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
 }
 
-/* Scrollbar invisible pero funcional para el Kanban snap */
-.snap-x::-webkit-scrollbar {
-  display: none;
+.liquid-glass-dark {
+  background: rgba(15, 23, 42, 0.85);
+  /* Navy */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.snap-x {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.glass-input {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(203, 213, 225, 0.6);
+  /* Slate-300 */
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
 }
 
-/* Typography Utilities */
-.text-balance {
-  text-wrap: balance;
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #E30052;
+  /* Ceramdent Fucsia */
+  box-shadow: 0 0 0 3px rgba(227, 0, 82, 0.1);
+  outline: none;
 }

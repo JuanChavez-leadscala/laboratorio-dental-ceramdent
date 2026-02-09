@@ -47,7 +47,7 @@ export function NuevaOrdenForm() {
 
     return (
         <div className="w-full max-w-3xl mx-auto px-4 py-8">
-            <form action={formAction} className="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden">
+            <form action={formAction} className="liquid-glass rounded-[2rem] p-8 md:p-12 relative overflow-hidden transition-all duration-500 hover:shadow-2xl">
                 {/* Decorative background element */}
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#E30052] to-blue-600"></div>
 
@@ -116,7 +116,8 @@ export function NuevaOrdenForm() {
                             <input
                                 type="number"
                                 name="piezas"
-                                className="input w-full bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl"
+                                name="piezas"
+                                className="input w-full glass-input rounded-xl"
                                 min="1"
                                 value={piezas}
                                 onChange={(e) => setPiezas(parseInt(e.target.value) || 1)}
@@ -148,7 +149,7 @@ export function NuevaOrdenForm() {
                             <input
                                 type="date"
                                 name="fecha_entrega"
-                                className="input w-full bg-white border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-xl"
+                                className="input w-full glass-input rounded-xl"
                                 required
                             />
                         </div>
