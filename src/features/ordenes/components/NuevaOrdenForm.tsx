@@ -116,7 +116,6 @@ export function NuevaOrdenForm() {
                             <input
                                 type="number"
                                 name="piezas"
-                                name="piezas"
                                 className="input w-full glass-input rounded-xl"
                                 min="1"
                                 value={piezas}
