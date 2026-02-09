@@ -11,6 +11,7 @@ export async function createOrden(prevState: any, formData: FormData) {
     // Extract data
     const clinica_id = formData.get('clinica_id') as string
     const servicio_id = formData.get('servicio_id') as string
+    const nombre_paciente = formData.get('nombre_paciente') as string
     const descripcion = formData.get('descripcion') as string
     const piezas = parseInt(formData.get('piezas') as string)
     const color = formData.get('color') as string
@@ -43,6 +44,7 @@ export async function createOrden(prevState: any, formData: FormData) {
             codigo_rastreo,
             clinica_id,
             servicio_id,
+            nombre_paciente,
             descripcion,
             piezas,
             color: color === '' ? null : color,

@@ -70,10 +70,12 @@ export function Sidebar() {
                     </div>
 
                     {/* Action Button */}
-                    <button className="mb-8 w-full py-3 px-4 glass-button-fucsia rounded-xl flex items-center justify-center gap-2 font-semibold">
-                        <PlusCircle size={20} />
-                        <span>Nueva Orden</span>
-                    </button>
+                    <Link href="/ordenes/nuevo" className="w-full">
+                        <button className="mb-8 w-full py-3 px-4 glass-button-fucsia rounded-xl flex items-center justify-center gap-2 font-semibold">
+                            <PlusCircle size={20} />
+                            <span>Nueva Orden</span>
+                        </button>
+                    </Link>
 
                     {/* Navigation */}
                     <nav className="flex-1 space-y-2">
