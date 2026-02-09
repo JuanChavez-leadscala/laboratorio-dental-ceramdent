@@ -43,23 +43,21 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
 
     return (
         <div className="relative">
-            <label className="label">
-                <span className="label-text">Clínica</span>
-            </label>
             <input
                 type="text"
                 placeholder="Buscar clínica..."
-                className="input input-bordered w-full"
+                className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => query.length >= 2 && setIsOpen(true)}
             />
 
             {isOpen && results.length > 0 && (
-                <ul className="absolute z-10 menu p-2 shadow bg-base-100 rounded-box w-full mt-1">
+                <ul className="absolute z-30 menu p-2 shadow-2xl bg-ceramdent-navy border border-white/10 rounded-xl w-full mt-2">
                     {results.map((clinica) => (
                         <li key={clinica.id}>
                             <button
+                                className="text-white hover:bg-white/10"
                                 onClick={() => {
                                     setQuery(clinica.nombre)
                                     onSelect(clinica.id)

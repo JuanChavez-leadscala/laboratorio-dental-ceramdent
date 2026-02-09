@@ -19,18 +19,42 @@ export async function createOrden(prevState: any, formData: FormData) {
     const abono = parseFloat((formData.get('abono') as string) || '0')
     const metodo_pago = formData.get('metodo_pago') as string
 
-    // Fetch service price for server-side calculation verification
-    const { data: service } = await supabase
-        .from('catalogo_servicios')
-        .select('precio_unitario')
-        .eq('id', servicio_id)
-        .single()
+    // Seed fallback IDs (ensure this matches useServicios.ts)
+    const SEED_IDS = [
+        '11111111-1111-1111-1111-111111111111',
+        '22222222-2222-2222-2222-222222222222',
+        '33333333-3333-3333-3333-333333333333',
+        '44444444-4444-4444-4444-444444444444',
+        '55555555-5555-5555-5555-555555555555',
+        '66666666-6666-6666-6666-666666666666'
+    ]
 
-    if (!service) {
-        return { error: 'Servicio no válido' }
+    let precio_unitario = 0
+
+    if (SEED_IDS.includes(servicio_id)) {
+        // Mock prices for seed services if they don't exist in DB yet
+        const seedPrices: Record<string, number> = {
+            '11111111-1111-1111-1111-111111111111': 150,
+            '22222222-2222-2222-2222-222222222222': 120,
+            '33333333-3333-3333-3333-333333333333': 350,
+            '44444444-4444-4444-4444-444444444444': 400,
+            '55555555-5555-5555-5555-555555555555': 80,
+            '66666666-6666-6666-6666-666666666666': 95
+        }
+        precio_unitario = seedPrices[servicio_id]
+    } else {
+        // Fetch service price from DB
+        const { data: service } = await supabase
+            .from('catalogo_servicios')
+            .select('precio_unitario')
+            .eq('id', servicio_id)
+            .single()
+
+        if (!service) {
+            return { error: 'Servicio no válido' }
+        }
+        precio_unitario = service.precio_unitario
     }
-
-    const precio_unitario = service.precio_unitario
     const monto_total = calculateTotal(piezas, precio_unitario)
     const saldo_pendiente = calculateSaldoPendiente(monto_total, abono)
 
