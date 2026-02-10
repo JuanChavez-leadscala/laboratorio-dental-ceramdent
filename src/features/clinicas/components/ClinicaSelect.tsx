@@ -48,7 +48,11 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
                 placeholder="Buscar clínica..."
                 className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                    const val = e.target.value;
+                    setQuery(val);
+                    onSelect(val); // Send current text as ID (action handles creation)
+                }}
                 onFocus={() => query.length >= 2 && setIsOpen(true)}
             />
 

@@ -69,3 +69,21 @@ body {
 .glow-blue {
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
 }
+
+/* Number Input Spinners Visibility */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1 !important;
+  cursor: pointer;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: none;
+}
+
+input[type="number"]:hover,
+input[type="number"]:focus {
+  -moz-appearance: number-input;
+  appearance: auto;
+}

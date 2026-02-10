@@ -61,12 +61,42 @@ export async function createOrden(prevState: any, formData: FormData) {
     // Generate a simple code (in real production, use a robust generator)
     const codigo_rastreo = `ORD-${Date.now().toString().slice(-6)}`
 
+    // Clinic resolution: if clinica_id is not a UUID, it might be a new name or a selected name
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    let finalClinicaId = clinica_id;
+
+    if (!uuidRegex.test(clinica_id)) {
+        // It's a name, search for it or create it
+        const { data: existingClinica } = await supabase
+            .from('clinicas')
+            .select('id')
+            .ilike('nombre', clinica_id)
+            .single();
+
+        if (existingClinica) {
+            finalClinicaId = existingClinica.id;
+        } else {
+            // Create new clinic
+            const { data: newClinica, error: createError } = await supabase
+                .from('clinicas')
+                .insert({ nombre: clinica_id })
+                .select('id')
+                .single();
+
+            if (createError) {
+                console.error('Error creating clinic:', createError);
+                return { error: 'Error al registrar la clínica' };
+            }
+            finalClinicaId = newClinica.id;
+        }
+    }
+
     // Insert Order
     const { data: order, error: orderError } = await supabase
         .from('ordenes_trabajo')
         .insert({
             codigo_rastreo,
-            clinica_id,
+            clinica_id: finalClinicaId,
             servicio_id,
             nombre_paciente,
             descripcion,
