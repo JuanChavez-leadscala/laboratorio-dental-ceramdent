@@ -8,9 +8,21 @@ export function KPICards() {
     const [ingresos, setIngresos] = useState(0)
     const [porCobrar, setPorCobrar] = useState(0)
     const [utilidad, setUtilidad] = useState(0)
+    const [role, setRole] = useState<string | null>(null)
     const supabase = createClient()
 
     const fetchData = async () => {
+        // Get current user role
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            const { data: profile } = await supabase
+                .from('usuarios')
+                .select('rol')
+                .eq('id', user.id)
+                .single()
+            if (profile) setRole(profile.rol)
+        }
+
         // Ingresos del mes
         const { data: finanzas } = await supabase
             .from('finanzas')
@@ -18,7 +30,7 @@ export function KPICards() {
 
         // Cuentas por cobrar (Saldo pendiente de ordenes activas)
         const { data: ordenes } = await supabase
-            .from('ordenes_trabajo')
+            .from('ordenes')
             .select('saldo_pendiente')
             .gt('saldo_pendiente', 0)
 
@@ -47,13 +59,15 @@ export function KPICards() {
         const channel = supabase
             .channel('kpi_updates')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'finanzas' }, fetchData)
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes_trabajo' }, fetchData)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes' }, fetchData)
             .subscribe()
 
         return () => {
             supabase.removeChannel(channel)
         }
     }, [])
+
+    if (role === 'CLIENT') return null
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -87,20 +101,22 @@ export function KPICards() {
                 </div>
             </div>
 
-            {/* KPI 3: Utilidad Neta */}
-            <div className="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden border border-white/5">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-[0.05] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
-                <div className="flex items-center justify-between relative z-10">
-                    <div>
-                        <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Utilidad Neta</p>
-                        <h3 className="text-3xl font-bold text-white mt-2 font-mono tracking-tight">${utilidad.toLocaleString()}</h3>
-                        <p className="text-[10px] text-emerald-500 mt-1 font-semibold uppercase tracking-wider bg-emerald-500/10 inline-block px-2 py-0.5 rounded-full">Resultado Real</p>
-                    </div>
-                    <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover:bg-emerald-500/20 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-                        <TrendingUp className="w-8 h-8 text-emerald-500" />
+            {/* KPI 3: Utilidad Neta (Solo para ADMIN) */}
+            {role === 'ADMIN' && (
+                <div className="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden border border-white/5">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-[0.05] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                    <div className="flex items-center justify-between relative z-10">
+                        <div>
+                            <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Utilidad Neta</p>
+                            <h3 className="text-3xl font-bold text-white mt-2 font-mono tracking-tight">${utilidad.toLocaleString()}</h3>
+                            <p className="text-[10px] text-emerald-500 mt-1 font-semibold uppercase tracking-wider bg-emerald-500/10 inline-block px-2 py-0.5 rounded-full">Resultado Real</p>
+                        </div>
+                        <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover:bg-emerald-500/20 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                            <TrendingUp className="w-8 h-8 text-emerald-500" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }

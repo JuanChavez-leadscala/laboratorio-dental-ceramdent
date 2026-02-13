@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useFormState } from 'react-dom'
 import { ClinicaSelect } from '@/features/clinicas/components/ClinicaSelect'
 import { useServicios } from '@/features/catalogo/hooks/useServicios'
+import { useColores } from '@/features/catalogo/hooks/useColores'
 import { createOrden } from '../actions/ordenes'
 import { calculateTotal } from '../utils/calculos'
 import {
@@ -15,14 +16,18 @@ import {
     CreditCard,
     Save,
     Stethoscope,
-    Briefcase
+    Briefcase,
+    ChevronDown
 } from 'lucide-react'
 
-const COLORS = ['A1', 'A2', 'A3', 'A3.5', 'A4', 'B1', 'B2', 'B3', 'B4', 'C1', 'C2', 'C3', 'C4', 'D2', 'D3', 'D4', 'BL1', 'BL2', 'BL3', 'BL4']
-
 export function NuevaOrdenForm() {
-    const { servicios, loading } = useServicios()
+    const { servicios, loading: loadingServicios } = useServicios()
+    const { colores, loading: loadingColores } = useColores()
+
+    const [serviceQuery, setServiceQuery] = useState('')
     const [selectedServiceId, setSelectedServiceId] = useState('')
+    const [showServiceResults, setShowServiceResults] = useState(false)
+
     const [piezas, setPiezas] = useState(1)
     const [total, setTotal] = useState(0)
     const [clinicaId, setClinicaId] = useState('')
@@ -31,19 +36,31 @@ export function NuevaOrdenForm() {
     const [state, formAction] = useFormState<any, any>(createOrden, initialState)
 
     useEffect(() => {
-        const service = servicios.find(s => s.id === selectedServiceId)
+        const service = servicios.find((s: any) => s.id === selectedServiceId)
         if (service) {
-            setTotal(calculateTotal(piezas, service.precio_unitario))
-        } else {
-            setTotal(0)
+            setTotal(calculateTotal(piezas, service.precio))
+            setServiceQuery(service.nombre)
+        } else if (!selectedServiceId && serviceQuery) {
+            // Check if serviceQuery matches a name exactly
+            const match = servicios.find((s: any) => s.nombre.toLowerCase() === serviceQuery.toLowerCase())
+            if (match) {
+                setSelectedServiceId(match.id)
+                setTotal(calculateTotal(piezas, match.precio))
+            } else {
+                setTotal(0)
+            }
         }
-    }, [selectedServiceId, piezas, servicios])
+    }, [selectedServiceId, serviceQuery, piezas, servicios])
 
-    if (loading) return (
+    if (loadingServicios || loadingColores) return (
         <div className="flex items-center justify-center min-h-[400px]">
             <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
     )
+
+    const filteredServicios = servicios.filter((s: any) =>
+        s.nombre.toLowerCase().includes(serviceQuery.toLowerCase())
+    ).slice(0, 5)
 
     return (
         <div className="w-full max-w-3xl mx-auto px-4 py-8">
@@ -81,39 +98,73 @@ export function NuevaOrdenForm() {
 
                     {/* Sección 1: Datos Clínicos */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Clínica Select */}
+                        {/* Clínica Select (Searchable / Free Text) */}
                         <div className="form-control space-y-2">
                             <label className="text-sm font-semibold text-white/70 flex items-center gap-2 uppercase tracking-widest text-[10px]">
                                 <Stethoscope className="w-4 h-4 text-ceramdent-fucsia" />
                                 Clínica / Doctor
                             </label>
-                            <input type="hidden" name="clinica_id" value={clinicaId} required />
-                            <div className="relative z-20">
+                            <input type="hidden" name="clinica_id" value={clinicaId} />
+                            <div className="relative z-30">
                                 <ClinicaSelect onSelect={setClinicaId} />
                             </div>
                         </div>
 
-                        {/* Servicio Select */}
+                        {/* Servicio Select (Searchable / Free Text) */}
                         <div className="form-control space-y-2">
                             <label className="text-sm font-semibold text-white/70 flex items-center gap-2 uppercase tracking-widest text-[10px]">
                                 <Briefcase className="w-4 h-4 text-ceramdent-blue" />
                                 Servicio
                             </label>
+                            <input type="hidden" name="servicio_id" value={selectedServiceId || serviceQuery} />
                             <div className="relative">
-                                <select
-                                    name="servicio_id"
-                                    className="select w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
-                                    value={selectedServiceId}
-                                    onChange={(e) => setSelectedServiceId(e.target.value)}
-                                    required
-                                >
-                                    <option value="" className="bg-ceramdent-navy">Seleccione un servicio...</option>
-                                    {servicios.map(s => (
-                                        <option key={s.id} value={s.id} className="bg-ceramdent-navy">
-                                            {s.nombre_servicio} - ${s.precio_unitario}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar o escribir nuevo..."
+                                        className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20 pr-10"
+                                        value={serviceQuery}
+                                        onChange={(e) => {
+                                            setServiceQuery(e.target.value)
+                                            setSelectedServiceId('')
+                                            setShowServiceResults(true)
+                                        }}
+                                        onFocus={() => setShowServiceResults(true)}
+                                    />
+                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                                </div>
+
+                                {showServiceResults && (serviceQuery.length > 0 || filteredServicios.length > 0) && (
+                                    <ul className="absolute z-20 menu p-2 shadow-2xl bg-ceramdent-navy border border-white/10 rounded-xl w-full mt-2 max-h-60 overflow-y-auto overflow-x-hidden">
+                                        {filteredServicios.map((s: any) => (
+                                            <li key={s.id}>
+                                                <button
+                                                    type="button"
+                                                    className="text-white hover:bg-white/10 flex justify-between items-center"
+                                                    onClick={() => {
+                                                        setServiceQuery(s.nombre)
+                                                        setSelectedServiceId(s.id)
+                                                        setShowServiceResults(false)
+                                                    }}
+                                                >
+                                                    <span>{s.nombre}</span>
+                                                    <span className="text-xs text-white/40">${s.precio}</span>
+                                                </button>
+                                            </li>
+                                        ))}
+                                        {serviceQuery && !servicios.find((s: any) => s.nombre.toLowerCase() === serviceQuery.toLowerCase()) && (
+                                            <li>
+                                                <button
+                                                    type="button"
+                                                    className="text-ceramdent-fucsia hover:bg-ceramdent-fucsia/10 italic text-xs"
+                                                    onClick={() => setShowServiceResults(false)}
+                                                >
+                                                    + Crear nuevo servicio: "{serviceQuery}"
+                                                </button>
+                                            </li>
+                                        )}
+                                    </ul>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -145,11 +196,11 @@ export function NuevaOrdenForm() {
                                 Color
                             </label>
                             <select
-                                name="color"
+                                name="color_id"
                                 className="select w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
                             >
                                 <option value="" className="bg-ceramdent-navy">N/A</option>
-                                {COLORS.map(c => <option key={c} value={c} className="bg-ceramdent-navy">{c}</option>)}
+                                {colores.map(c => <option key={c.id} value={c.id} className="bg-ceramdent-navy">{c.nombre}</option>)}
                             </select>
                         </div>
 
@@ -208,6 +259,7 @@ export function NuevaOrdenForm() {
                                     <select name="metodo_pago" className="select w-full glass-input rounded-xl border-white/5 bg-white/5 text-white" defaultValue="Efectivo">
                                         <option value="Efectivo" className="bg-ceramdent-navy">Efectivo</option>
                                         <option value="Transferencia" className="bg-ceramdent-navy">Transferencia</option>
+                                        <option value="Tarjeta" className="bg-ceramdent-navy">Tarjeta</option>
                                     </select>
                                 </div>
                             </div>
@@ -243,6 +295,14 @@ export function NuevaOrdenForm() {
                     </div>
                 </div>
             </form>
+
+            {/* Click outside to close results */}
+            {showServiceResults && (
+                <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowServiceResults(false)}
+                />
+            )}
         </div>
     )
 }

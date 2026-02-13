@@ -14,7 +14,7 @@ type Orden = {
     fecha_entrega: string
     monto_total: number
     saldo_pendiente: number
-    clinica: { nombre: string } | null
+    cliente: { nombre_doctor: string; nombre_clinica: string | null } | null
 }
 
 const COLUMNS = ['Ingresado', 'En Diseño', 'En Proceso', 'Listo para Entrega', 'Entregado']
@@ -26,17 +26,17 @@ export function TableroKanban() {
 
     const fetchOrdenes = async () => {
         const { data } = await supabase
-            .from('ordenes_trabajo')
+            .from('ordenes')
             .select(`
         id, codigo_rastreo, descripcion, estado, fecha_entrega, monto_total, saldo_pendiente,
-        clinicas ( nombre )
+        clientes ( nombre_doctor, nombre_clinica )
       `)
             .order('created_at', { ascending: false })
 
         if (data) {
             const mapped = data.map((o: any) => ({
                 ...o,
-                clinica: o.clinicas
+                cliente: o.clientes
             }))
             setOrdenes(mapped)
         }
@@ -47,7 +47,7 @@ export function TableroKanban() {
 
         const channel = supabase
             .channel('kanban_updates')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes_trabajo' }, fetchOrdenes)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes' }, fetchOrdenes)
             .subscribe()
 
         return () => {
@@ -62,7 +62,7 @@ export function TableroKanban() {
         }
 
         const { error } = await supabase
-            .from('ordenes_trabajo')
+            .from('ordenes')
             .update({ estado: newStatus })
             .eq('id', id)
 
@@ -154,7 +154,10 @@ export function TableroKanban() {
                                             <UserCircle className="w-4 h-4 text-white/40" />
                                         </div>
                                         {/* @ts-ignore */}
-                                        <span className="text-sm font-bold truncate tracking-tight">{orden.clinica?.nombre || 'Clínica desconocida'}</span>
+                                        <span className="text-sm font-bold truncate tracking-tight">
+                                            {orden.cliente?.nombre_doctor || 'Doctor desconocido'}
+                                            {orden.cliente?.nombre_clinica ? ` (${orden.cliente.nombre_clinica})` : ''}
+                                        </span>
                                     </div>
 
                                     {/* Description */}
