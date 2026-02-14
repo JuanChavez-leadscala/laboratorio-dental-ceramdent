@@ -1,26 +1,28 @@
-'use client'
-
 import { useState } from 'react'
-import { useClientes } from '@/features/clinicas/hooks/useClientes'
+import { useClientes, Cliente } from '@/features/clinicas/hooks/useClientes'
+import { ImportData } from '@/features/automation/components/ImportData'
+import { AddEditClienteModal } from '@/features/clinicas/components/AddEditClienteModal'
 import {
     Search,
-    Plus,
-    MoreHorizontal,
+    Building2,
+    User,
     Phone,
     Mail,
-    Building2,
     DollarSign,
-    User
+    MoreHorizontal,
+    Plus,
+    Edit2
 } from 'lucide-react'
-import { ImportData } from '@/features/automation/components/ImportData'
 
 export default function ClinicasPage() {
     const { clientes, loading, refetch } = useClientes()
-    const [query, setQuery] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
+    const [selectedCliente, setSelectedCliente] = useState<Cliente | undefined>()
+    const [showModal, setShowModal] = useState(false)
 
     const filtered = clientes.filter(c =>
-        c.nombre_doctor.toLowerCase().includes(query.toLowerCase()) ||
-        c.nombre_clinica?.toLowerCase().includes(query.toLowerCase())
+        c.doctor_responsable.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     if (loading) return (
@@ -30,82 +32,108 @@ export default function ClinicasPage() {
     )
 
     return (
-        <div className="space-y-8 pb-10">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-700">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">Directorio</h1>
-                    <p className="text-white/50 mt-2 text-lg">Base de datos de clínicas y doctores.</p>
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight">Directorio Clínico</h1>
+                    <p className="text-white/40 mt-1">Gestión de doctores y clínicas asociadas.</p>
                 </div>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => {
+                            setSelectedCliente(undefined)
+                            setShowModal(true)
+                        }}
+                        className="btn bg-ceramdent-fucsia hover:bg-[#c90048] border-none text-white gap-2 rounded-xl"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Añadir Nuevo
+                    </button>
+                    <ImportData table="clinicas" onComplete={refetch} />
+                </div>
+            </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-ceramdent-blue transition-colors" />
-                        <input
-                            type="text"
-                            placeholder="Buscar cliente..."
-                            className="bg-white/5 border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-ceramdent-blue/30 w-full md:w-64 transition-all"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                        />
+            {/* Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Search & Stats */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="liquid-glass p-6 rounded-2xl border border-white/10 space-y-6">
+                        <div className="relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                            <input
+                                type="text"
+                                placeholder="Buscar doctor..."
+                                className="input w-full pl-12 glass-input rounded-xl border-white/5 bg-white/10 text-white placeholder:text-white/20"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="space-y-4 pt-4 border-t border-white/5">
+                            <div className="flex justify-between items-center px-2">
+                                <span className="text-xs font-semibold text-white/30 uppercase tracking-widest">Registros</span>
+                                <span className="text-white font-bold">{clientes.length}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Table */}
                 <div className="lg:col-span-3">
-                    <div className="glass-panel rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
-                        <div className="overflow-x-auto overflow-y-auto max-h-[700px] scrollbar-hide">
-                            <table className="table w-full border-collapse">
+                    <div className="liquid-glass rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+                        <div className="overflow-x-auto">
+                            <table className="table w-full border-separate border-spacing-0">
                                 <thead>
-                                    <tr className="border-b border-white/5 bg-white/[0.02]">
-                                        <th className="bg-transparent text-white/40 font-bold uppercase tracking-widest text-[10px] py-6 px-8">Cliente</th>
-                                        <th className="bg-transparent text-white/40 font-bold uppercase tracking-widest text-[10px] py-6 px-8">Contacto</th>
-                                        <th className="bg-transparent text-white/40 font-bold uppercase tracking-widest text-[10px] py-6 px-8 text-right">Saldo</th>
-                                        <th className="bg-transparent text-white/40 font-bold uppercase tracking-widest text-[10px] py-6 px-8"></th>
+                                    <tr className="bg-white/5 text-white/50 border-none">
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] first:rounded-tl-3xl">Doctor / Clínica</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px]">Contacto</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-right">Saldo</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-center last:rounded-tr-3xl">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {filtered.map(cliente => (
-                                        <tr key={cliente.id} className="hover:bg-white/[0.02] transition-colors group">
-                                            <td className="py-6 px-8">
+                                <tbody>
+                                    {filtered.map((cliente) => (
+                                        <tr key={cliente.id} className="hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-none group">
+                                            <td className="py-6 px-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-ceramdent-blue/10 group-hover:border-ceramdent-blue/20 transition-all">
-                                                        <User className="w-6 h-6 text-white/30 group-hover:text-ceramdent-blue" />
+                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ceramdent-fucsia/20 to-ceramdent-blue/20 border border-white/10 flex items-center justify-center text-ceramdent-fucsia group-hover:scale-110 transition-transform">
+                                                        <User className="w-6 h-6" />
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-white text-base">{cliente.nombre_doctor}</div>
-                                                        <div className="text-xs text-white/40 flex items-center gap-1 mt-1">
+                                                        <div className="font-bold text-white text-lg">{cliente.doctor_responsable}</div>
+                                                        <div className="text-sm text-white/30 flex items-center gap-1.5 mt-0.5">
                                                             <Building2 className="w-3 h-3" />
-                                                            {cliente.nombre_clinica || 'Independiente'}
+                                                            {cliente.nombre || 'Sin clínica'}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="py-6 px-8">
-                                                <div className="space-y-1">
-                                                    {cliente.telefono && (
-                                                        <div className="text-sm text-white/60 flex items-center gap-2">
-                                                            <Phone className="w-3 h-3 text-ceramdent-blue" />
-                                                            {cliente.telefono}
-                                                        </div>
-                                                    )}
-                                                    {cliente.email_doctor && (
-                                                        <div className="text-sm text-white/40 flex items-center gap-2">
-                                                            <Mail className="w-3 h-3" />
-                                                            {cliente.email_doctor}
-                                                        </div>
-                                                    )}
+                                            <td className="py-6 px-6">
+                                                <div className="space-y-1.5">
+                                                    <div className="text-sm text-white/60 flex items-center gap-2">
+                                                        <Phone className="w-3.5 h-3.5 text-white/20" />
+                                                        {cliente.telefono || '-'}
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td className="py-6 px-8 text-right">
-                                                <div className={`text-lg font-mono font-bold ${cliente.saldo_acumulado > 0 ? 'text-ceramdent-fucsia' : 'text-emerald-400'}`}>
-                                                    ${cliente.saldo_acumulado.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                            <td className="py-6 px-6 text-right">
+                                                <div className="flex flex-col items-end">
+                                                    <span className={`text-lg font-bold tracking-tight ${cliente.saldo_acumulado > 0 ? 'text-ceramdent-fucsia' : 'text-green-400'}`}>
+                                                        ${cliente.saldo_acumulado.toFixed(2)}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest mt-1">Acumulado</span>
                                                 </div>
-                                                <div className="text-[10px] uppercase font-bold text-white/20 mt-1">Saldo Acumulado</div>
                                             </td>
-                                            <td className="py-6 px-8 text-right">
-                                                <button className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/30 hover:text-white transition-all">
-                                                    <MoreHorizontal className="w-5 h-5" />
+                                            <td className="py-6 px-6 text-center">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedCliente(cliente)
+                                                        setShowModal(true)
+                                                    }}
+                                                    className="btn btn-ghost btn-circle text-white/30 hover:text-ceramdent-blue hover:bg-ceramdent-blue/10 bg-white/5"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
                                                 </button>
                                             </td>
                                         </tr>
@@ -126,7 +154,7 @@ export default function ClinicasPage() {
                 </div>
 
                 <div className="lg:col-span-1 space-y-6">
-                    <ImportData table="clientes" onComplete={refetch} />
+                    <ImportData table="clinicas" onComplete={refetch} />
                 </div>
             </div>
         </div>

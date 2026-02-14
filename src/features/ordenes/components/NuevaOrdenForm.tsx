@@ -30,7 +30,11 @@ export function NuevaOrdenForm() {
 
     const [piezas, setPiezas] = useState(1)
     const [total, setTotal] = useState(0)
+    const [precioUnitario, setPrecioUnitario] = useState(0)
+    const [abono, setAbono] = useState(0)
     const [clinicaId, setClinicaId] = useState('')
+    const [clinicaNombre, setClinicaNombre] = useState('') // New state for clinica_nombre
+    const [servicioNombre, setServicioNombre] = useState('') // New state for servicio_nombre
 
     const initialState = { error: null }
     const [state, formAction] = useFormState<any, any>(createOrden, initialState)
@@ -38,19 +42,23 @@ export function NuevaOrdenForm() {
     useEffect(() => {
         const service = servicios.find((s: any) => s.id === selectedServiceId)
         if (service) {
-            setTotal(calculateTotal(piezas, service.precio))
-            setServiceQuery(service.nombre)
+            setPrecioUnitario(service.precio_unitario)
+            setServiceQuery(service.nombre_servicio)
+            setServicioNombre(service.nombre_servicio)
         } else if (!selectedServiceId && serviceQuery) {
             // Check if serviceQuery matches a name exactly
-            const match = servicios.find((s: any) => s.nombre.toLowerCase() === serviceQuery.toLowerCase())
+            const match = servicios.find((s: any) => s.nombre_servicio.toLowerCase() === serviceQuery.toLowerCase())
             if (match) {
                 setSelectedServiceId(match.id)
-                setTotal(calculateTotal(piezas, match.precio))
-            } else {
-                setTotal(0)
+                setPrecioUnitario(match.precio_unitario)
+                setServicioNombre(match.nombre_servicio)
             }
         }
-    }, [selectedServiceId, serviceQuery, piezas, servicios])
+    }, [selectedServiceId, serviceQuery, servicios])
+
+    useEffect(() => {
+        setTotal(piezas * precioUnitario)
+    }, [piezas, precioUnitario])
 
     if (loadingServicios || loadingColores) return (
         <div className="flex items-center justify-center min-h-[400px]">
@@ -59,7 +67,7 @@ export function NuevaOrdenForm() {
     )
 
     const filteredServicios = servicios.filter((s: any) =>
-        s.nombre.toLowerCase().includes(serviceQuery.toLowerCase())
+        s.nombre_servicio.toLowerCase().includes(serviceQuery.toLowerCase())
     ).slice(0, 5)
 
     return (
@@ -106,7 +114,7 @@ export function NuevaOrdenForm() {
                             </label>
                             <input type="hidden" name="clinica_id" value={clinicaId} />
                             <div className="relative z-30">
-                                <ClinicaSelect onSelect={setClinicaId} />
+                                <ClinicaSelect onSelect={(id, name) => { setClinicaId(id); setClinicaNombre(name); }} />
                             </div>
                         </div>
 
@@ -125,7 +133,9 @@ export function NuevaOrdenForm() {
                                         className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20 pr-10"
                                         value={serviceQuery}
                                         onChange={(e) => {
-                                            setServiceQuery(e.target.value)
+                                            const val = e.target.value
+                                            setServiceQuery(val)
+                                            setServicioNombre(val)
                                             setSelectedServiceId('')
                                             setShowServiceResults(true)
                                         }}
@@ -142,17 +152,19 @@ export function NuevaOrdenForm() {
                                                     type="button"
                                                     className="text-white hover:bg-white/10 flex justify-between items-center"
                                                     onClick={() => {
-                                                        setServiceQuery(s.nombre)
+                                                        setServiceQuery(s.nombre_servicio)
                                                         setSelectedServiceId(s.id)
+                                                        setServicioNombre(s.nombre_servicio)
+                                                        setPrecioUnitario(s.precio_unitario)
                                                         setShowServiceResults(false)
                                                     }}
                                                 >
-                                                    <span>{s.nombre}</span>
-                                                    <span className="text-xs text-white/40">${s.precio}</span>
+                                                    <span>{s.nombre_servicio}</span>
+                                                    <span className="text-xs text-white/40">${s.precio_unitario}</span>
                                                 </button>
                                             </li>
                                         ))}
-                                        {serviceQuery && !servicios.find((s: any) => s.nombre.toLowerCase() === serviceQuery.toLowerCase()) && (
+                                        {serviceQuery && !servicios.find((s: any) => s.nombre_servicio.toLowerCase() === serviceQuery.toLowerCase()) && (
                                             <li>
                                                 <button
                                                     type="button"
@@ -236,8 +248,28 @@ export function NuevaOrdenForm() {
                     <div className="glass-panel p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
                         <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest mb-6 border-b border-white/5 pb-3">Detalle Financiero</h3>
 
+                        {/* Hidden Inputs for Direct Insertion */}
+                        <input type="hidden" name="clinica_nombre" value={clinicaNombre} />
+                        <input type="hidden" name="servicio_id" value={selectedServiceId} />
+                        <input type="hidden" name="servicio_nombre" value={servicioNombre} />
+                        <input type="hidden" name="precio_unitario" value={precioUnitario} />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                             <div className="space-y-4">
+                                <div className="form-control space-y-2">
+                                    <label className="text-xs font-semibold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                                        <DollarSign className="w-3 h-3 text-ceramdent-blue" />
+                                        Precio del Servicio
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
+                                        value={precioUnitario}
+                                        onChange={(e) => setPrecioUnitario(parseFloat(e.target.value) || 0)}
+                                        step="0.01"
+                                        required
+                                    />
+                                </div>
                                 <div className="form-control space-y-2">
                                     <label className="text-xs font-semibold text-white/40 uppercase tracking-widest flex items-center gap-2">
                                         <DollarSign className="w-3 h-3 text-ceramdent-blue" />
@@ -249,6 +281,8 @@ export function NuevaOrdenForm() {
                                         className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
                                         placeholder="0.00"
                                         step="0.01"
+                                        value={abono}
+                                        onChange={(e) => setAbono(parseFloat(e.target.value) || 0)}
                                     />
                                 </div>
                                 <div className="form-control space-y-2">
@@ -264,11 +298,19 @@ export function NuevaOrdenForm() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col items-end justify-center h-full p-6 bg-white/[0.03] rounded-2xl border border-white/5 shadow-inner">
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Total Estimado</span>
-                                <span className="text-4xl font-extrabold text-ceramdent-fucsia tracking-tighter mt-1">
-                                    ${total.toFixed(2)}
-                                </span>
+                            <div className="space-y-4">
+                                <div className="flex flex-col items-end justify-center p-6 bg-white/[0.03] rounded-2xl border border-white/5 shadow-inner">
+                                    <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Total Estimado</span>
+                                    <span className="text-3xl font-extrabold text-white tracking-tighter mt-1">
+                                        ${total.toFixed(2)}
+                                    </span>
+                                </div>
+                                <div className="flex flex-col items-end justify-center p-6 bg-ceramdent-fucsia/5 rounded-2xl border border-ceramdent-fucsia/10 shadow-inner">
+                                    <span className="text-[10px] font-bold text-ceramdent-fucsia/60 uppercase tracking-widest">Saldo Pendiente</span>
+                                    <span className="text-4xl font-extrabold text-ceramdent-fucsia tracking-tighter mt-1">
+                                        ${(total - abono).toFixed(2)}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

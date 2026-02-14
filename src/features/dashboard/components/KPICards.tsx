@@ -23,33 +23,46 @@ export function KPICards() {
             if (profile) setRole(profile.rol)
         }
 
-        // Ingresos del mes
-        const { data: finanzas } = await supabase
-            .from('finanzas')
-            .select('monto, tipo')
+        // Ventas del Mes (Suma de monto_total de ordenes del mes actual)
+        const now = new Date()
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
-        // Cuentas por cobrar (Saldo pendiente de ordenes activas)
-        const { data: ordenes } = await supabase
+        const { data: ordersThisMonth } = await supabase
+            .from('ordenes')
+            .select('monto_total')
+            .gte('created_at', firstDayOfMonth)
+
+        // Cuentas por cobrar (Saldo pendiente de todas las ordenes)
+        const { data: pendingOrders } = await supabase
             .from('ordenes')
             .select('saldo_pendiente')
             .gt('saldo_pendiente', 0)
 
+        // Utilidad calculation (Optional enhancement: using finance entries for actual cash flow)
+        const { data: finanzas } = await supabase
+            .from('finanzas')
+            .select('monto, tipo')
+
+        if (ordersThisMonth) {
+            const totalVentas = ordersThisMonth.reduce((sum, o) => sum + Number(o.monto_total), 0)
+            setIngresos(totalVentas)
+        }
+
+        if (pendingOrders) {
+            const totalPorCobrar = pendingOrders.reduce((sum, o) => sum + Number(o.saldo_pendiente), 0)
+            setPorCobrar(totalPorCobrar)
+        }
+
         if (finanzas) {
             const totalIngresos = finanzas
                 .filter(f => f.tipo === 'Ingreso')
-                .reduce((sum, f) => sum + f.monto, 0)
+                .reduce((sum, f) => sum + Number(f.monto), 0)
 
             const totalEgresos = finanzas
                 .filter(f => f.tipo === 'Egreso')
-                .reduce((sum, f) => sum + f.monto, 0)
+                .reduce((sum, f) => sum + Number(f.monto), 0)
 
-            setIngresos(totalIngresos)
             setUtilidad(totalIngresos - totalEgresos)
-        }
-
-        if (ordenes) {
-            const totalPorCobrar = ordenes.reduce((sum, o) => sum + o.saldo_pendiente, 0)
-            setPorCobrar(totalPorCobrar)
         }
     }
 
@@ -57,9 +70,9 @@ export function KPICards() {
         fetchData()
 
         const channel = supabase
-            .channel('kpi_updates')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'finanzas' }, fetchData)
+            .channel('dashboard_realtime')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes' }, fetchData)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'finanzas' }, fetchData)
             .subscribe()
 
         return () => {

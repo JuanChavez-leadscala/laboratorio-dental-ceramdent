@@ -6,10 +6,11 @@ import { createClient } from '@/shared/lib/supabase'
 type Clinica = {
     id: string
     nombre: string
+    doctor_responsable: string
 }
 
 interface ClinicaSelectProps {
-    onSelect: (clinicaId: string) => void
+    onSelect: (clinicaId: string, clinicaNombre: string) => void
 }
 
 export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
@@ -27,8 +28,8 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
 
             const { data } = await supabase
                 .from('clinicas')
-                .select('id, nombre')
-                .ilike('nombre', `%${query}%`)
+                .select('id, nombre, doctor_responsable')
+                .or(`nombre.ilike.%${query}%,doctor_responsable.ilike.%${query}%`)
                 .limit(5)
 
             if (data) {
@@ -45,13 +46,13 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
         <div className="relative">
             <input
                 type="text"
-                placeholder="Buscar clínica..."
+                placeholder="Buscar clínica o doctor..."
                 className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20"
                 value={query}
                 onChange={(e) => {
                     const val = e.target.value;
                     setQuery(val);
-                    onSelect(val); // Send current text as ID (action handles creation)
+                    onSelect(val, val); // Send text as both ID and Name for direct insertion
                 }}
                 onFocus={() => query.length >= 2 && setIsOpen(true)}
             />
@@ -61,14 +62,16 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
                     {results.map((clinica) => (
                         <li key={clinica.id}>
                             <button
-                                className="text-white hover:bg-white/10"
+                                type="button"
+                                className="text-white hover:bg-white/10 flex flex-col items-start gap-0.5"
                                 onClick={() => {
-                                    setQuery(clinica.nombre)
-                                    onSelect(clinica.id)
+                                    setQuery(clinica.doctor_responsable)
+                                    onSelect(clinica.id, clinica.doctor_responsable)
                                     setIsOpen(false)
                                 }}
                             >
-                                {clinica.nombre}
+                                <span className="font-bold">{clinica.doctor_responsable}</span>
+                                <span className="text-[10px] uppercase opacity-40">{clinica.nombre}</span>
                             </button>
                         </li>
                     ))}

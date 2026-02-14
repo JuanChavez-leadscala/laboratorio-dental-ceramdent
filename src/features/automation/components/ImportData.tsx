@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx'
 import { Upload, FileUp, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface Props {
-    table: 'clientes' | 'servicios'
+    table: 'clinicas' | 'catalogo_servicios'
     onComplete?: () => void
 }
 
@@ -61,7 +61,7 @@ export function ImportData({ table, onComplete }: Props) {
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-white flex items-center gap-2">
                     <FileUp className="w-5 h-5 text-ceramdent-blue" />
-                    Importar {table === 'clientes' ? 'Directorio' : 'Catálogo'}
+                    Importar {table === 'clinicas' ? 'Directorio' : 'Catálogo'}
                 </h3>
                 {status === 'success' && <CheckCircle className="w-5 h-5 text-emerald-400" />}
                 {status === 'error' && <AlertCircle className="w-5 h-5 text-ceramdent-fucsia" />}
@@ -69,7 +69,7 @@ export function ImportData({ table, onComplete }: Props) {
 
             <p className="text-xs text-white/40 mb-6 leading-relaxed">
                 Sube un archivo Excel (.xlsx) o CSV con las columnas correspondientes
-                ({table === 'clientes' ? 'nombre_doctor, nombre_clinica' : 'nombre, precio, categoria'}).
+                ({table === 'clinicas' ? 'doctor_responsable, nombre' : 'nombre_servicio, precio_unitario'}).
             </p>
 
             <label className={`

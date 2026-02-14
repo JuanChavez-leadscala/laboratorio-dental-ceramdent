@@ -5,9 +5,9 @@ import { createClient } from '@/shared/lib/supabase'
 
 export type Servicio = {
     id: string
-    nombre: string
-    precio: number
-    categoria: string | null
+    nombre_servicio: string
+    precio_unitario: number
+    categoria?: string | null
 }
 
 export function useServicios() {
@@ -18,9 +18,9 @@ export function useServicios() {
         setLoading(true)
         const supabase = createClient()
         const { data } = await supabase
-            .from('servicios')
+            .from('catalogo_servicios')
             .select('*')
-            .order('nombre')
+            .order('nombre_servicio')
 
         if (data) {
             setServicios(data)
