@@ -8,7 +8,7 @@ export async function registrarPago(ordenId: string, monto: number, metodo: stri
 
     // 1. Get current order status
     const { data: order, error: fetchError } = await supabase
-        .from('ordenes')
+        .from('ordenes_trabajo')
         .select('monto_total, saldo_pendiente')
         .eq('id', ordenId)
         .single()
@@ -36,7 +36,7 @@ export async function registrarPago(ordenId: string, monto: number, metodo: stri
     const nuevoSaldo = order.saldo_pendiente - monto
 
     const { error: updateError } = await supabase
-        .from('ordenes')
+        .from('ordenes_trabajo')
         .update({ saldo_pendiente: nuevoSaldo })
         .eq('id', ordenId)
 

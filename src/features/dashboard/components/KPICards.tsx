@@ -28,13 +28,13 @@ export function KPICards() {
         const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
         const { data: ordersThisMonth } = await supabase
-            .from('ordenes')
+            .from('ordenes_trabajo')
             .select('monto_total')
             .gte('created_at', firstDayOfMonth)
 
         // Cuentas por cobrar (Saldo pendiente de todas las ordenes)
         const { data: pendingOrders } = await supabase
-            .from('ordenes')
+            .from('ordenes_trabajo')
             .select('saldo_pendiente')
             .gt('saldo_pendiente', 0)
 
@@ -71,7 +71,7 @@ export function KPICards() {
 
         const channel = supabase
             .channel('dashboard_realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes' }, fetchData)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'ordenes_trabajo' }, fetchData)
             .on('postgres_changes', { event: '*', schema: 'public', table: 'finanzas' }, fetchData)
             .subscribe()
 
