@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { useClientes, Cliente } from '@/features/clinicas/hooks/useClientes'
 import { ImportData } from '@/features/automation/components/ImportData'
