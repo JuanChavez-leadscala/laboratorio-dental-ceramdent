@@ -20,6 +20,12 @@ body {
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.text-high-contrast {
+  color: #1e293b;
+  /* Slate-800 */
 }
 
 /* Glassmorphism Styles */

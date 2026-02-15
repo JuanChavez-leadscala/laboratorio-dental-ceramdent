@@ -27,53 +27,53 @@ export async function createOrden(prevState: any, formData: FormData) {
         const cuotas = parseInt(formData.get('cuotas') as string || '1')
         const metodo_pago = (formData.get('metodo_pago') as string) || 'Efectivo'
 
-        // 1. Resolve Cliente (Clinic)
-        let finalClienteId = cliente_id
+        // 1. Resolve Clínica
+        let finalClinicaId = cliente_id
         if (!uuidRegex.test(cliente_id) || !cliente_id) {
-            // Find or create cliente by nombre_doctor
-            const { data: existingCliente } = await supabase
-                .from('clientes')
+            // Find or create clinica by doctor_responsable
+            const { data: existingClinica } = await supabase
+                .from('clinicas')
                 .select('id')
-                .eq('nombre_doctor', clinica_nombre)
+                .eq('doctor_responsable', clinica_nombre)
                 .maybeSingle()
 
-            if (existingCliente) {
-                finalClienteId = existingCliente.id
+            if (existingClinica) {
+                finalClinicaId = existingClinica.id
             } else {
-                const { data: newCliente, error: cError } = await supabase
-                    .from('clientes')
+                const { data: newClinica, error: cError } = await supabase
+                    .from('clinicas')
                     .insert([{
-                        nombre_doctor: clinica_nombre,
-                        nombre_clinica: client_nombre_legal || 'Clínica Nueva',
-                        telefono: client_documento // Hijacking telefono for documento if no column exists, or just skip it if not in schema
+                        doctor_responsable: clinica_nombre,
+                        nombre: client_nombre_legal || 'Clínica Nueva',
+                        telefono: client_documento // We'll use this as temporary storage if needed, or stick to schema
                     }])
                     .select('id')
                     .maybeSingle()
 
                 if (cError) throw cError
-                if (!newCliente) throw new Error('No se pudo crear el cliente')
-                finalClienteId = newCliente.id
+                if (!newClinica) throw new Error('No se pudo crear la clínica')
+                finalClinicaId = newClinica.id
             }
         }
 
         // 2. Resolve Servicio
         let finalServicioId = servicio_id
         if (!uuidRegex.test(servicio_id) || !servicio_id) {
-            // Find or create servicio by nombre
+            // Find or create servicio by nombre_servicio
             const { data: existingServicio } = await supabase
-                .from('servicios')
+                .from('catalogo_servicios')
                 .select('id')
-                .eq('nombre', servicio_nombre)
+                .eq('nombre_servicio', servicio_nombre)
                 .maybeSingle()
 
             if (existingServicio) {
                 finalServicioId = existingServicio.id
             } else {
                 const { data: newServicio, error: sError } = await supabase
-                    .from('servicios')
+                    .from('catalogo_servicios')
                     .insert([{
-                        nombre: servicio_nombre,
-                        precio: precio
+                        nombre_servicio: servicio_nombre,
+                        precio_unitario: precio
                     }])
                     .select('id')
                     .maybeSingle()
@@ -89,13 +89,13 @@ export async function createOrden(prevState: any, formData: FormData) {
 
         // 3. Create Orden
         const { data: newOrden, error: oError } = await supabase
-            .from('ordenes')
+            .from('ordenes_trabajo')
             .insert([{
                 codigo_rastreo: codigo_trabajo || `ORDER-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-                cliente_id: finalClienteId,
+                clinica_id: finalClinicaId,
                 servicio_id: finalServicioId,
                 piezas,
-                color_id: uuidRegex.test(color_id) ? color_id : null,
+                color: formData.get('color') as any, // Enum color_dental
                 paciente,
                 fecha_entrega,
                 descripcion,

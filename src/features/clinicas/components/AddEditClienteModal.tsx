@@ -6,8 +6,8 @@ import { Plus, Save, X, User, Phone, Mail, Building2 } from 'lucide-react'
 
 interface Cliente {
     id?: string
-    nombre_doctor: string
-    nombre_clinica: string
+    doctor_responsable: string
+    nombre: string
     telefono?: string | null
 }
 
@@ -20,8 +20,8 @@ interface Props {
 export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState<Cliente>({
-        nombre_doctor: '',
-        nombre_clinica: '',
+        doctor_responsable: '',
+        nombre: '',
         telefono: ''
     })
 
@@ -40,10 +40,10 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
             if (formData.id) {
                 // Update
                 const { error } = await supabase
-                    .from('clientes')
+                    .from('clinicas')
                     .update({
-                        nombre_doctor: formData.nombre_doctor,
-                        nombre_clinica: formData.nombre_clinica,
+                        doctor_responsable: formData.doctor_responsable,
+                        nombre: formData.nombre,
                         telefono: formData.telefono
                     })
                     .eq('id', formData.id)
@@ -51,7 +51,7 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
             } else {
                 // Create
                 const { error } = await supabase
-                    .from('clientes')
+                    .from('clinicas')
                     .insert([formData])
                 if (error) throw error
             }
@@ -87,9 +87,9 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
                         <input
                             type="text"
                             required
-                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-fucsia"
-                            value={formData.nombre_doctor}
-                            onChange={(e) => setFormData({ ...formData, nombre_doctor: e.target.value })}
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-fucsia transition-all"
+                            value={formData.doctor_responsable}
+                            onChange={(e) => setFormData({ ...formData, doctor_responsable: e.target.value })}
                             placeholder="Ej. Dr. Armando Torres"
                         />
                     </div>
@@ -97,14 +97,14 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
                     <div className="form-control space-y-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <Building2 className="w-3 h-3 text-slate-300" />
-                            Nombre de Clínica
+                            Nombre de Clínica *
                         </label>
                         <input
                             type="text"
                             required
-                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue"
-                            value={formData.nombre_clinica}
-                            onChange={(e) => setFormData({ ...formData, nombre_clinica: e.target.value })}
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue transition-all"
+                            value={formData.nombre}
+                            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                             placeholder="Ej. Dental Perfect"
                         />
                     </div>
@@ -116,7 +116,7 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
                         </label>
                         <input
                             type="text"
-                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue"
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue transition-all"
                             value={formData.telefono || ''}
                             onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                             placeholder="555-0000"

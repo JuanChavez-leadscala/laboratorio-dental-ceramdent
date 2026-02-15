@@ -12,8 +12,8 @@ export type Orden = {
     saldo_pendiente: number
     fecha_entrega: string
     created_at: string
-    cliente: { nombre_doctor: string } | null
-    servicio: { nombre: string } | null
+    cliente?: { doctor_responsable: string } | null
+    servicio?: { nombre_servicio: string } | null
 }
 
 export function useOrdenes() {
@@ -22,18 +22,16 @@ export function useOrdenes() {
 
     const fetchOrdenes = async () => {
         const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
 
         let query = supabase
-            .from('ordenes')
+            .from('ordenes_trabajo')
             .select(`
                 *,
-                cliente:clientes(nombre_doctor),
-                servicio:servicios(nombre)
+                cliente:clinicas(doctor_responsable),
+                servicio:catalogo_servicios(nombre_servicio)
             `)
             .order('created_at', { ascending: false })
 
-        // If client, filter by their ID (handled by RLS too, but good for explicit)
         const { data } = await query
 
         if (data) {

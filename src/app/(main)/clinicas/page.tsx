@@ -24,8 +24,8 @@ export default function ClinicasPage() {
     const [showModal, setShowModal] = useState(false)
 
     const filtered = clientes.filter(c =>
-        c.nombre_doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.nombre_clinica?.toLowerCase().includes(searchTerm.toLowerCase())
+        c.doctor_responsable?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     if (loading) return (
@@ -40,7 +40,7 @@ export default function ClinicasPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Directorio Clínico</h1>
-                    <p className="text-slate-500 mt-1">Gestión de doctores y clínicas asociadas.</p>
+                    <p className="text-slate-500 mt-1 font-medium italic">Gestión de doctores y clínicas asociadas.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
@@ -48,13 +48,13 @@ export default function ClinicasPage() {
                             setSelectedCliente(undefined)
                             setShowModal(true)
                         }}
-                        className="btn bg-ceramdent-fucsia hover:bg-[#c90048] border-none text-white gap-2 rounded-xl"
+                        className="btn h-12 px-6 bg-[#E30052] hover:bg-[#c90048] border-none text-white gap-2 rounded-2xl shadow-lg shadow-[#E30052]/20 transition-all hover:scale-[1.02]"
                     >
                         <Plus className="w-5 h-5" />
-                        Añadir Nuevo
+                        <span className="font-bold">Añadir Nuevo</span>
                     </button>
-                    <ImportData table="clientes" onComplete={refetch} />
-                    <ExportButton table="clientes" buttonText="Reporte" />
+                    <ImportData table="clinicas" onComplete={refetch} />
+                    <ExportButton table="clinicas" buttonText="Reporte" />
                 </div>
             </div>
 
@@ -62,22 +62,22 @@ export default function ClinicasPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Search & Stats */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-6">
+                    <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                             <input
                                 type="text"
-                                placeholder="Buscar doctor..."
-                                className="input w-full pl-12 bg-slate-50 border-slate-100 text-slate-900 rounded-xl"
+                                placeholder="Buscar doctor o clínica..."
+                                className="input w-full pl-12 bg-slate-50 border-slate-100 text-slate-900 rounded-xl focus:border-slate-300 placeholder:text-slate-300 transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
 
-                        <div className="space-y-4 pt-4 border-t border-white/5">
+                        <div className="pt-4 border-t border-slate-100">
                             <div className="flex justify-between items-center px-2">
-                                <span className="text-xs font-semibold text-white/30 uppercase tracking-widest">Registros</span>
-                                <span className="text-white font-bold">{clientes.length}</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Registros</span>
+                                <span className="text-slate-800 font-extrabold text-lg">{clientes.length}</span>
                             </div>
                         </div>
                     </div>
@@ -85,48 +85,48 @@ export default function ClinicasPage() {
 
                 {/* Table */}
                 <div className="lg:col-span-3">
-                    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="table w-full border-separate border-spacing-0">
                                 <thead>
-                                    <tr className="bg-slate-50 text-slate-500 border-none">
-                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] first:rounded-tl-3xl">Doctor / Clínica</th>
-                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px]">Contacto</th>
-                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-right">Saldo</th>
-                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-center last:rounded-tr-3xl">Acciones</th>
+                                    <tr className="bg-slate-50/50 text-slate-500 border-none">
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-slate-400">Doctor / Clínica</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-slate-400">Contacto</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-right text-slate-400">Estado de Cuenta</th>
+                                        <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-center text-slate-400">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filtered.map((cliente) => (
-                                        <tr key={cliente.id} className="hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-none group">
+                                        <tr key={cliente.id} className="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-none group">
                                             <td className="py-6 px-6">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ceramdent-fucsia/10 to-ceramdent-blue/10 border border-slate-100 flex items-center justify-center text-ceramdent-fucsia group-hover:scale-110 transition-transform">
                                                         <User className="w-6 h-6" />
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-slate-800 text-lg">{cliente.nombre_doctor}</div>
-                                                        <div className="text-sm text-slate-400 flex items-center gap-1.5 mt-0.5">
-                                                            <Building2 className="w-3 h-3" />
-                                                            {cliente.nombre_clinica || 'Sin clínica'}
+                                                        <div className="font-extrabold text-slate-800 text-lg tracking-tight">{cliente.doctor_responsable || 'Doctor N/A'}</div>
+                                                        <div className="text-sm font-bold text-slate-400 flex items-center gap-1.5 mt-0.5">
+                                                            <Building2 className="w-3.5 h-3.5" />
+                                                            {cliente.nombre || 'Sin clínica'}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-6 px-6">
                                                 <div className="space-y-1.5">
-                                                    <div className="text-sm text-white/60 flex items-center gap-2">
-                                                        <Phone className="w-3.5 h-3.5 text-white/20" />
+                                                    <div className="text-sm font-bold text-slate-600 flex items-center gap-2">
+                                                        <Phone className="w-4 h-4 text-slate-300" />
                                                         {cliente.telefono || '-'}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-6 px-6 text-right">
                                                 <div className="flex flex-col items-end">
-                                                    <span className={`text-lg font-bold tracking-tight ${cliente.saldo_acumulado > 0 ? 'text-ceramdent-fucsia' : 'text-emerald-500'}`}>
+                                                    <span className={`text-xl font-black tracking-tighter ${cliente.saldo_acumulado > 0 ? 'text-[#E30052]' : 'text-emerald-500'}`}>
                                                         S/ {cliente.saldo_acumulado.toFixed(2)}
                                                     </span>
-                                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Acumulado</span>
+                                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1 italic">SALDO ACUMULADO</span>
                                                 </div>
                                             </td>
                                             <td className="py-6 px-6 text-center">
@@ -135,9 +135,9 @@ export default function ClinicasPage() {
                                                         setSelectedCliente(cliente)
                                                         setShowModal(true)
                                                     }}
-                                                    className="btn btn-ghost btn-circle text-slate-300 hover:text-ceramdent-blue hover:bg-ceramdent-blue/5 bg-slate-50"
+                                                    className="btn btn-ghost btn-circle text-slate-300 hover:text-ceramdent-blue hover:bg-ceramdent-blue/5 transition-all"
                                                 >
-                                                    <Edit2 className="w-4 h-4" />
+                                                    <Edit2 className="w-5 h-5" />
                                                 </button>
                                             </td>
                                         </tr>
@@ -146,21 +146,28 @@ export default function ClinicasPage() {
                             </table>
                         </div>
                         {filtered.length === 0 && (
-                            <div className="p-20 text-center flex flex-col items-center justify-center">
-                                <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center mb-6 border border-white/10">
-                                    <Search className="w-10 h-10 text-white/10" />
+                            <div className="p-20 text-center flex flex-col items-center justify-center bg-slate-50/30">
+                                <div className="w-24 h-24 rounded-3xl bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
+                                    <Search className="w-10 h-10 text-slate-200" />
                                 </div>
-                                <h3 className="text-xl font-bold text-white/40">No se encontraron clientes</h3>
-                                <p className="text-white/20 mt-2">Intenta con otros términos de búsqueda.</p>
+                                <h3 className="text-xl font-bold text-slate-400">No se encontraron clientes</h3>
+                                <p className="text-slate-300 mt-2 font-medium">Intenta con otros términos de búsqueda o registra uno nuevo.</p>
                             </div>
                         )}
                     </div>
                 </div>
-
-                <div className="lg:col-span-1 space-y-6">
-                    <ImportData table="clientes" onComplete={refetch} />
-                </div>
             </div>
+
+            {showModal && (
+                <AddEditClienteModal
+                    cliente={selectedCliente as any}
+                    onClose={() => setShowModal(false)}
+                    onSuccess={() => {
+                        setShowModal(false)
+                        refetch()
+                    }}
+                />
+            )}
         </div>
     )
 }

@@ -6,9 +6,8 @@ import { Plus, Save, X, Briefcase, DollarSign, Tag } from 'lucide-react'
 
 interface Servicio {
     id?: string
-    nombre: string
-    precio: number
-    categoria?: string | null
+    nombre_servicio: string
+    precio_unitario: number
 }
 
 interface Props {
@@ -20,9 +19,8 @@ interface Props {
 export function AddEditServicioModal({ servicio, onClose, onSuccess }: Props) {
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState<Servicio>({
-        nombre: '',
-        precio: 0,
-        categoria: ''
+        nombre_servicio: '',
+        precio_unitario: 0
     })
 
     useEffect(() => {
@@ -40,18 +38,17 @@ export function AddEditServicioModal({ servicio, onClose, onSuccess }: Props) {
             if (formData.id) {
                 // Update
                 const { error } = await supabase
-                    .from('servicios')
+                    .from('catalogo_servicios')
                     .update({
-                        nombre: formData.nombre,
-                        precio: formData.precio,
-                        categoria: formData.categoria
+                        nombre_servicio: formData.nombre_servicio,
+                        precio_unitario: formData.precio_unitario
                     })
                     .eq('id', formData.id)
                 if (error) throw error
             } else {
                 // Create
                 const { error } = await supabase
-                    .from('servicios')
+                    .from('catalogo_servicios')
                     .insert([formData])
                 if (error) throw error
             }
@@ -88,8 +85,8 @@ export function AddEditServicioModal({ servicio, onClose, onSuccess }: Props) {
                             type="text"
                             required
                             className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue transition-all"
-                            value={formData.nombre}
-                            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                            value={formData.nombre_servicio}
+                            onChange={(e) => setFormData({ ...formData, nombre_servicio: e.target.value })}
                             placeholder="Ej. Corona de Zirconio"
                         />
                     </div>
@@ -104,23 +101,9 @@ export function AddEditServicioModal({ servicio, onClose, onSuccess }: Props) {
                             required
                             step="0.01"
                             className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue transition-all"
-                            value={formData.precio}
-                            onChange={(e) => setFormData({ ...formData, precio: parseFloat(e.target.value) || 0 })}
+                            value={formData.precio_unitario}
+                            onChange={(e) => setFormData({ ...formData, precio_unitario: parseFloat(e.target.value) || 0 })}
                             placeholder="0.00"
-                        />
-                    </div>
-
-                    <div className="form-control space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <Tag className="w-3 h-3 text-slate-300" />
-                            Categoría
-                        </label>
-                        <input
-                            type="text"
-                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue transition-all"
-                            value={formData.categoria || ''}
-                            onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-                            placeholder="Ej. Fija, Removible..."
                         />
                     </div>
 

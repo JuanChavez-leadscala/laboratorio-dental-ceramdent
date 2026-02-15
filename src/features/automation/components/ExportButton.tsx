@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx'
 import { createClient } from '@/shared/lib/supabase'
 
 interface Props {
-    table: 'clientes' | 'servicios' | 'ordenes'
+    table: 'clinicas' | 'catalogo_servicios' | 'ordenes_trabajo'
     filename?: string
     buttonText?: string
     className?: string

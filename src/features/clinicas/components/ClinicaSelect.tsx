@@ -5,8 +5,8 @@ import { createClient } from '@/shared/lib/supabase'
 
 type Clinica = {
     id: string
-    nombre_clinica: string
-    nombre_doctor: string
+    nombre: string // Clinica Name
+    doctor_responsable: string | null
 }
 
 interface ClinicaSelectProps {
@@ -27,9 +27,9 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
             }
 
             const { data } = await supabase
-                .from('clientes')
-                .select('id, nombre_doctor, nombre_clinica')
-                .or(`nombre_doctor.ilike.%${query}%,nombre_clinica.ilike.%${query}%`)
+                .from('clinicas')
+                .select('id, doctor_responsable, nombre')
+                .or(`doctor_responsable.ilike.%${query}%,nombre.ilike.%${query}%`)
                 .limit(5)
 
             if (data) {
@@ -65,13 +65,13 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
                                 type="button"
                                 className="text-slate-700 hover:bg-slate-50 flex flex-col items-start gap-0.5"
                                 onClick={() => {
-                                    setQuery(clinica.nombre_doctor)
-                                    onSelect(clinica.id, clinica.nombre_doctor)
+                                    setQuery(clinica.doctor_responsable || clinica.nombre)
+                                    onSelect(clinica.id, clinica.doctor_responsable || clinica.nombre)
                                     setIsOpen(false)
                                 }}
                             >
-                                <span className="font-bold">{clinica.nombre_doctor}</span>
-                                <span className="text-[10px] uppercase text-slate-400 font-medium">{clinica.nombre_clinica}</span>
+                                <span className="font-bold">{clinica.doctor_responsable}</span>
+                                <span className="text-[10px] uppercase text-slate-500 font-medium">{clinica.nombre}</span>
                             </button>
                         </li>
                     ))}
