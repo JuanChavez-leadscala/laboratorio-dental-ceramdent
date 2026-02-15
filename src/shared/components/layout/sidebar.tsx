@@ -19,7 +19,7 @@ import { logout } from "@/features/auth/actions/auth";
 import { cn } from "@/shared/lib/utils";
 
 const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", roles: ['ADMIN', 'STAFF'] },
+    { icon: LayoutDashboard, label: "Flujo de Trabajo", href: "/dashboard", roles: ['ADMIN', 'STAFF'] },
     { icon: ClipboardList, label: "Órdenes", href: "/ordenes", roles: ['ADMIN', 'STAFF', 'CLIENT'] },
     { icon: Users, label: "Directorio", href: "/clinicas", roles: ['ADMIN', 'STAFF'] },
     { icon: FileText, label: "Servicios", href: "/catalogo", roles: ['ADMIN', 'STAFF'] },
@@ -64,8 +64,8 @@ export function Sidebar() {
                             <span className="text-white font-bold text-xl">C</span>
                         </div>
                         <div>
-                            <h1 className="text-white font-bold text-lg leading-tight">Ceramdent</h1>
-                            <span className="text-white/40 text-xs uppercase tracking-widest font-medium">Digital Lab</span>
+                            <h1 className="text-slate-900 font-bold text-lg leading-tight">Ceramdent</h1>
+                            <span className="text-slate-500 text-xs uppercase tracking-widest font-medium">Digital Lab</span>
                         </div>
                     </div>
 
@@ -108,7 +108,7 @@ export function Sidebar() {
                     <div className="mt-auto pt-6 border-t border-white/10">
                         <Link href="/perfil" className="block group">
                             <div className="flex items-center gap-3 mb-6 p-2 rounded-xl hover:bg-white/5 transition-all">
-                                <div className="w-10 h-10 rounded-full bg-ceramdent-blue/20 border border-ceramdent-blue/30 flex items-center justify-center">
+                                <div className="w-10 h-10 rounded-full bg-ceramdent-blue/10 border border-ceramdent-blue/20 flex items-center justify-center">
                                     <Users size={20} className="text-ceramdent-blue" />
                                 </div>
                                 <div className="flex-1 min-w-0">

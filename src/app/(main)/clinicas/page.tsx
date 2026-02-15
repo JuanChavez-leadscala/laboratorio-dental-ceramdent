@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useClientes, Cliente } from '@/features/clinicas/hooks/useClientes'
 import { ImportData } from '@/features/automation/components/ImportData'
+import { ExportButton } from '@/features/automation/components/ExportButton'
 import { AddEditClienteModal } from '@/features/clinicas/components/AddEditClienteModal'
 import {
     Search,
@@ -21,8 +22,8 @@ export default function ClinicasPage() {
     const [showModal, setShowModal] = useState(false)
 
     const filtered = clientes.filter(c =>
-        c.doctor_responsable.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.nombre?.toLowerCase().includes(searchTerm.toLowerCase())
+        c.nombre_doctor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.nombre_clinica?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     if (loading) return (
@@ -36,8 +37,8 @@ export default function ClinicasPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl font-extrabold text-white tracking-tight">Directorio Clínico</h1>
-                    <p className="text-white/40 mt-1">Gestión de doctores y clínicas asociadas.</p>
+                    <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">Directorio Clínico</h1>
+                    <p className="text-slate-500 mt-1">Gestión de doctores y clínicas asociadas.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
@@ -50,7 +51,8 @@ export default function ClinicasPage() {
                         <Plus className="w-5 h-5" />
                         Añadir Nuevo
                     </button>
-                    <ImportData table="clinicas" onComplete={refetch} />
+                    <ImportData table="clientes" onComplete={refetch} />
+                    <ExportButton table="clientes" buttonText="Reporte" />
                 </div>
             </div>
 
@@ -58,13 +60,13 @@ export default function ClinicasPage() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Search & Stats */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="liquid-glass p-6 rounded-2xl border border-white/10 space-y-6">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-6">
                         <div className="relative">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                             <input
                                 type="text"
                                 placeholder="Buscar doctor..."
-                                className="input w-full pl-12 glass-input rounded-xl border-white/5 bg-white/10 text-white placeholder:text-white/20"
+                                className="input w-full pl-12 bg-slate-50 border-slate-100 text-slate-900 rounded-xl"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -81,11 +83,11 @@ export default function ClinicasPage() {
 
                 {/* Table */}
                 <div className="lg:col-span-3">
-                    <div className="liquid-glass rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+                    <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                         <div className="overflow-x-auto">
                             <table className="table w-full border-separate border-spacing-0">
                                 <thead>
-                                    <tr className="bg-white/5 text-white/50 border-none">
+                                    <tr className="bg-slate-50 text-slate-500 border-none">
                                         <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] first:rounded-tl-3xl">Doctor / Clínica</th>
                                         <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px]">Contacto</th>
                                         <th className="py-6 px-6 font-bold uppercase tracking-widest text-[10px] text-right">Saldo</th>
@@ -97,14 +99,14 @@ export default function ClinicasPage() {
                                         <tr key={cliente.id} className="hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-none group">
                                             <td className="py-6 px-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ceramdent-fucsia/20 to-ceramdent-blue/20 border border-white/10 flex items-center justify-center text-ceramdent-fucsia group-hover:scale-110 transition-transform">
+                                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-ceramdent-fucsia/10 to-ceramdent-blue/10 border border-slate-100 flex items-center justify-center text-ceramdent-fucsia group-hover:scale-110 transition-transform">
                                                         <User className="w-6 h-6" />
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-white text-lg">{cliente.doctor_responsable}</div>
-                                                        <div className="text-sm text-white/30 flex items-center gap-1.5 mt-0.5">
+                                                        <div className="font-bold text-slate-800 text-lg">{cliente.nombre_doctor}</div>
+                                                        <div className="text-sm text-slate-400 flex items-center gap-1.5 mt-0.5">
                                                             <Building2 className="w-3 h-3" />
-                                                            {cliente.nombre || 'Sin clínica'}
+                                                            {cliente.nombre_clinica || 'Sin clínica'}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -119,10 +121,10 @@ export default function ClinicasPage() {
                                             </td>
                                             <td className="py-6 px-6 text-right">
                                                 <div className="flex flex-col items-end">
-                                                    <span className={`text-lg font-bold tracking-tight ${cliente.saldo_acumulado > 0 ? 'text-ceramdent-fucsia' : 'text-green-400'}`}>
-                                                        ${cliente.saldo_acumulado.toFixed(2)}
+                                                    <span className={`text-lg font-bold tracking-tight ${cliente.saldo_acumulado > 0 ? 'text-ceramdent-fucsia' : 'text-emerald-500'}`}>
+                                                        S/ {cliente.saldo_acumulado.toFixed(2)}
                                                     </span>
-                                                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest mt-1">Acumulado</span>
+                                                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mt-1">Acumulado</span>
                                                 </div>
                                             </td>
                                             <td className="py-6 px-6 text-center">
@@ -131,7 +133,7 @@ export default function ClinicasPage() {
                                                         setSelectedCliente(cliente)
                                                         setShowModal(true)
                                                     }}
-                                                    className="btn btn-ghost btn-circle text-white/30 hover:text-ceramdent-blue hover:bg-ceramdent-blue/10 bg-white/5"
+                                                    className="btn btn-ghost btn-circle text-slate-300 hover:text-ceramdent-blue hover:bg-ceramdent-blue/5 bg-slate-50"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
@@ -154,7 +156,7 @@ export default function ClinicasPage() {
                 </div>
 
                 <div className="lg:col-span-1 space-y-6">
-                    <ImportData table="clinicas" onComplete={refetch} />
+                    <ImportData table="clientes" onComplete={refetch} />
                 </div>
             </div>
         </div>

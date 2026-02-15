@@ -6,8 +6,8 @@ import { Plus, Save, X, User, Phone, Mail, Building2 } from 'lucide-react'
 
 interface Cliente {
     id?: string
-    doctor_responsable: string
-    nombre: string // Clínica
+    nombre_doctor: string
+    nombre_clinica: string
     telefono?: string | null
 }
 
@@ -20,8 +20,8 @@ interface Props {
 export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState<Cliente>({
-        doctor_responsable: '',
-        nombre: '',
+        nombre_doctor: '',
+        nombre_clinica: '',
         telefono: ''
     })
 
@@ -40,10 +40,10 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
             if (formData.id) {
                 // Update
                 const { error } = await supabase
-                    .from('clinicas')
+                    .from('clientes')
                     .update({
-                        doctor_responsable: formData.doctor_responsable,
-                        nombre: formData.nombre,
+                        nombre_doctor: formData.nombre_doctor,
+                        nombre_clinica: formData.nombre_clinica,
                         telefono: formData.telefono
                     })
                     .eq('id', formData.id)
@@ -51,7 +51,7 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
             } else {
                 // Create
                 const { error } = await supabase
-                    .from('clinicas')
+                    .from('clientes')
                     .insert([formData])
                 if (error) throw error
             }
@@ -65,58 +65,58 @@ export function AddEditClienteModal({ cliente, onClose, onSuccess }: Props) {
     }
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="liquid-glass w-full max-w-md rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div className="bg-white w-full max-w-md rounded-[2rem] p-8 border border-slate-200 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ceramdent-fucsia to-ceramdent-blue"></div>
 
                 <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-bold text-white tracking-tight">
+                    <h3 className="text-2xl font-bold text-slate-800 tracking-tight">
                         {formData.id ? 'Editar Cliente' : 'Nuevo Cliente'}
                     </h3>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-all text-white/40 hover:text-white">
+                    <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-xl transition-all text-slate-400 hover:text-slate-600">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="form-control space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                             <User className="w-3 h-3 text-ceramdent-fucsia" />
                             Nombre del Doctor *
                         </label>
                         <input
                             type="text"
                             required
-                            className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
-                            value={formData.doctor_responsable}
-                            onChange={(e) => setFormData({ ...formData, doctor_responsable: e.target.value })}
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-fucsia"
+                            value={formData.nombre_doctor}
+                            onChange={(e) => setFormData({ ...formData, nombre_doctor: e.target.value })}
                             placeholder="Ej. Dr. Armando Torres"
                         />
                     </div>
 
                     <div className="form-control space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
-                            <Building2 className="w-3 h-3 text-white/20" />
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            <Building2 className="w-3 h-3 text-slate-300" />
                             Nombre de Clínica
                         </label>
                         <input
                             type="text"
                             required
-                            className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
-                            value={formData.nombre}
-                            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue"
+                            value={formData.nombre_clinica}
+                            onChange={(e) => setFormData({ ...formData, nombre_clinica: e.target.value })}
                             placeholder="Ej. Dental Perfect"
                         />
                     </div>
 
                     <div className="form-control space-y-2">
-                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
-                            <Phone className="w-3 h-3 text-white/20" />
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                            <Phone className="w-3 h-3 text-slate-300" />
                             Teléfono
                         </label>
                         <input
                             type="text"
-                            className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white"
+                            className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue"
                             value={formData.telefono || ''}
                             onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
                             placeholder="555-0000"

@@ -93,25 +93,24 @@ export function TableroKanban() {
             flex-none 
             w-[85vw] md:w-auto 
             snap-center 
-            glass-panel
-            bg-white/[0.02]
+            bg-slate-100/50
             rounded-3xl 
             p-5 
             flex flex-col 
-            border border-white/5
+            border border-slate-200
             h-full
           ">
 
                         {/* Column Header */}
-                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/5">
-                            <h3 className={`font-bold text-xs uppercase tracking-widest ${column === 'Listo para Entrega' ? 'text-emerald-400' : 'text-white/60'
+                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
+                            <h3 className={`font-bold text-[10px] uppercase tracking-widest ${column === 'Listo para Entrega' ? 'text-emerald-600' : 'text-slate-500'
                                 }`}>{column}</h3>
                             <span className="
                 px-2.5 py-1
                 rounded-lg 
-                bg-white/5 
-                text-[10px] font-bold text-white/40 
-                border border-white/10
+                bg-white 
+                text-[10px] font-bold text-slate-400 
+                border border-slate-200
               ">
                                 {ordenes.filter(o => o.estado === column).length}
                             </span>
@@ -122,36 +121,36 @@ export function TableroKanban() {
                             {ordenes.filter(o => o.estado === column).map(orden => (
                                 <div key={orden.id} className="
                   relative 
-                  glass-card
-                  bg-white/[0.03] hover:bg-white/[0.06]
-                  border border-white/5 
-                  hover:border-ceramdent-fucsia/30
+                  bg-white
+                  border border-slate-200 
+                  hover:border-ceramdent-fucsia/50
                   p-5 rounded-2xl 
                   transition-all duration-300 ease-out 
+                  shadow-sm hover:shadow-md
                   group
                   cursor-default
                 ">
 
                                     {/* Card Top: ID & Balance */}
                                     <div className="flex justify-between items-start mb-4">
-                                        <span className="font-mono text-[9px] font-bold text-white/30 tracking-widest uppercase">
+                                        <span className="font-mono text-[9px] font-bold text-slate-400 tracking-widest uppercase">
                                             {orden.codigo_rastreo}
                                         </span>
                                         {orden.saldo_pendiente > 0 ? (
-                                            <span className="text-[10px] font-bold text-ceramdent-fucsia bg-ceramdent-fucsia/10 border border-ceramdent-fucsia/20 px-2 py-0.5 rounded-full">
-                                                -${orden.saldo_pendiente}
+                                            <span className="text-[10px] font-bold text-ceramdent-fucsia bg-ceramdent-fucsia/5 border border-ceramdent-fucsia/10 px-2 py-0.5 rounded-full">
+                                                S/ {orden.saldo_pendiente}
                                             </span>
                                         ) : (
-                                            <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">
+                                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
                                                 Pagado
                                             </span>
                                         )}
                                     </div>
 
                                     {/* Clinic Info */}
-                                    <div className="flex items-center gap-2 mb-3 text-white">
-                                        <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                                            <UserCircle className="w-4 h-4 text-white/40" />
+                                    <div className="flex items-center gap-2 mb-3 text-slate-800">
+                                        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                                            <UserCircle className="w-4 h-4 text-slate-400" />
                                         </div>
                                         {/* @ts-ignore */}
                                         <span className="text-sm font-bold truncate tracking-tight">
@@ -161,13 +160,13 @@ export function TableroKanban() {
                                     </div>
 
                                     {/* Description */}
-                                    <p className="text-xs text-white/40 mb-5 line-clamp-2 leading-relaxed">
+                                    <p className="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">
                                         {orden.descripcion}
                                     </p>
 
                                     {/* Footer: Date & Actions */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                                        <span className="text-[10px] text-white/30 font-bold uppercase tracking-tighter">
+                                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
                                             {new Date(orden.fecha_entrega).toLocaleDateString()}
                                         </span>
 

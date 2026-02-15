@@ -85,30 +85,30 @@ export function KPICards() {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* KPI 1: Ventas del Mes */}
-            <div className="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden border border-white/5">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-ceramdent-fucsia opacity-[0.05] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+            <div className="bg-white rounded-2xl p-6 transition-all duration-300 hover:shadow-md border border-slate-200 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-ceramdent-fucsia opacity-[0.03] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
                 <div className="flex items-center justify-between relative z-10">
                     <div>
-                        <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Ventas del Mes</p>
-                        <h3 className="text-3xl font-bold text-white mt-2 font-mono tracking-tight">${ingresos.toLocaleString()}</h3>
-                        <p className="text-[10px] text-ceramdent-fucsia mt-1 font-semibold uppercase tracking-wider bg-ceramdent-fucsia/10 inline-block px-2 py-0.5 rounded-full">Flujo Bruto</p>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ventas del Mes</p>
+                        <h3 className="text-3xl font-bold text-slate-800 mt-2 font-mono tracking-tight">S/ {ingresos.toLocaleString()}</h3>
+                        <p className="text-[10px] text-ceramdent-fucsia mt-1 font-bold uppercase tracking-wider bg-ceramdent-fucsia/5 inline-block px-2 py-0.5 rounded-full">Flujo Bruto</p>
                     </div>
-                    <div className="p-4 bg-ceramdent-fucsia/10 rounded-2xl group-hover:bg-ceramdent-fucsia/20 transition-colors glow-fucsia">
+                    <div className="p-4 bg-ceramdent-fucsia/5 rounded-2xl">
                         <Banknote className="w-8 h-8 text-ceramdent-fucsia" />
                     </div>
                 </div>
             </div>
 
             {/* KPI 2: Por Cobrar */}
-            <div className="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden border border-white/5">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-ceramdent-blue opacity-[0.05] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+            <div className="bg-white rounded-2xl p-6 transition-all duration-300 hover:shadow-md border border-slate-200 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-ceramdent-blue opacity-[0.03] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
                 <div className="flex items-center justify-between relative z-10">
                     <div>
-                        <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Por Cobrar</p>
-                        <h3 className="text-3xl font-bold text-white mt-2 font-mono tracking-tight">${porCobrar.toLocaleString()}</h3>
-                        <p className="text-[10px] text-ceramdent-blue mt-1 font-semibold uppercase tracking-wider bg-ceramdent-blue/10 inline-block px-2 py-0.5 rounded-full">Pendiente de Pago</p>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Por Cobrar</p>
+                        <h3 className="text-3xl font-bold text-slate-800 mt-2 font-mono tracking-tight">S/ {porCobrar.toLocaleString()}</h3>
+                        <p className="text-[10px] text-ceramdent-blue mt-1 font-bold uppercase tracking-wider bg-ceramdent-blue/5 inline-block px-2 py-0.5 rounded-full">Pendiente de Pago</p>
                     </div>
-                    <div className="p-4 bg-ceramdent-blue/10 rounded-2xl group-hover:bg-ceramdent-blue/20 transition-colors glow-blue">
+                    <div className="p-4 bg-ceramdent-blue/5 rounded-2xl">
                         <Clock className="w-8 h-8 text-ceramdent-blue" />
                     </div>
                 </div>
@@ -116,15 +116,15 @@ export function KPICards() {
 
             {/* KPI 3: Utilidad Neta (Solo para ADMIN) */}
             {role === 'ADMIN' && (
-                <div className="glass-card rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 group relative overflow-hidden border border-white/5">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-[0.05] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
+                <div className="bg-white rounded-2xl p-6 transition-all duration-300 hover:shadow-md border border-slate-200 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500 opacity-[0.03] rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-150"></div>
                     <div className="flex items-center justify-between relative z-10">
                         <div>
-                            <p className="text-xs font-bold text-white/40 uppercase tracking-widest">Utilidad Neta</p>
-                            <h3 className="text-3xl font-bold text-white mt-2 font-mono tracking-tight">${utilidad.toLocaleString()}</h3>
-                            <p className="text-[10px] text-emerald-500 mt-1 font-semibold uppercase tracking-wider bg-emerald-500/10 inline-block px-2 py-0.5 rounded-full">Resultado Real</p>
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Utilidad Neta</p>
+                            <h3 className="text-3xl font-bold text-slate-800 mt-2 font-mono tracking-tight">S/ {utilidad.toLocaleString()}</h3>
+                            <p className="text-[10px] text-emerald-600 mt-1 font-bold uppercase tracking-wider bg-emerald-50/50 inline-block px-2 py-0.5 rounded-full">Resultado Real</p>
                         </div>
-                        <div className="p-4 bg-emerald-500/10 rounded-2xl group-hover:bg-emerald-500/20 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                        <div className="p-4 bg-emerald-50 rounded-2xl">
                             <TrendingUp className="w-8 h-8 text-emerald-500" />
                         </div>
                     </div>

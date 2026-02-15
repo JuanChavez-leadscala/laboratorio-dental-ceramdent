@@ -5,8 +5,8 @@ import { createClient } from '@/shared/lib/supabase'
 
 type Clinica = {
     id: string
-    nombre: string
-    doctor_responsable: string
+    nombre_clinica: string
+    nombre_doctor: string
 }
 
 interface ClinicaSelectProps {
@@ -27,9 +27,9 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
             }
 
             const { data } = await supabase
-                .from('clinicas')
-                .select('id, nombre, doctor_responsable')
-                .or(`nombre.ilike.%${query}%,doctor_responsable.ilike.%${query}%`)
+                .from('clientes')
+                .select('id, nombre_doctor, nombre_clinica')
+                .or(`nombre_doctor.ilike.%${query}%,nombre_clinica.ilike.%${query}%`)
                 .limit(5)
 
             if (data) {
@@ -47,7 +47,7 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
             <input
                 type="text"
                 placeholder="Buscar clínica o doctor..."
-                className="input w-full glass-input rounded-xl border-white/5 bg-white/5 text-white placeholder:text-white/20"
+                className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-fucsia transition-all"
                 value={query}
                 onChange={(e) => {
                     const val = e.target.value;
@@ -58,20 +58,20 @@ export function ClinicaSelect({ onSelect }: ClinicaSelectProps) {
             />
 
             {isOpen && results.length > 0 && (
-                <ul className="absolute z-30 menu p-2 shadow-2xl bg-ceramdent-navy border border-white/10 rounded-xl w-full mt-2">
+                <ul className="absolute z-30 menu p-2 shadow-2xl bg-white border border-slate-200 rounded-xl w-full mt-2">
                     {results.map((clinica) => (
                         <li key={clinica.id}>
                             <button
                                 type="button"
-                                className="text-white hover:bg-white/10 flex flex-col items-start gap-0.5"
+                                className="text-slate-700 hover:bg-slate-50 flex flex-col items-start gap-0.5"
                                 onClick={() => {
-                                    setQuery(clinica.doctor_responsable)
-                                    onSelect(clinica.id, clinica.doctor_responsable)
+                                    setQuery(clinica.nombre_doctor)
+                                    onSelect(clinica.id, clinica.nombre_doctor)
                                     setIsOpen(false)
                                 }}
                             >
-                                <span className="font-bold">{clinica.doctor_responsable}</span>
-                                <span className="text-[10px] uppercase opacity-40">{clinica.nombre}</span>
+                                <span className="font-bold">{clinica.nombre_doctor}</span>
+                                <span className="text-[10px] uppercase text-slate-400 font-medium">{clinica.nombre_clinica}</span>
                             </button>
                         </li>
                     ))}

@@ -5,8 +5,8 @@ import { createClient } from '@/shared/lib/supabase'
 
 export type Cliente = {
     id: string
-    nombre: string // Clínica
-    doctor_responsable: string
+    nombre_clinica: string
+    nombre_doctor: string
     telefono: string | null
     saldo_acumulado: number
     created_at: string
@@ -20,9 +20,9 @@ export function useClientes() {
         setLoading(true)
         const supabase = createClient()
         const { data } = await supabase
-            .from('clinicas')
+            .from('clientes')
             .select('*')
-            .order('doctor_responsable')
+            .order('nombre_doctor')
 
         if (data) {
             setClientes(data)

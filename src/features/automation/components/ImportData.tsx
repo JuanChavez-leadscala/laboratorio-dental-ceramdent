@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx'
 import { Upload, FileUp, CheckCircle, AlertCircle } from 'lucide-react'
 
 interface Props {
-    table: 'clinicas' | 'catalogo_servicios'
+    table: 'clientes' | 'servicios'
     onComplete?: () => void
 }
 
@@ -57,19 +57,19 @@ export function ImportData({ table, onComplete }: Props) {
     }
 
     return (
-        <div className="glass-panel p-6 rounded-3xl border border-white/5 bg-white/[0.02]">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-white flex items-center gap-2">
                     <FileUp className="w-5 h-5 text-ceramdent-blue" />
-                    Importar {table === 'clinicas' ? 'Directorio' : 'Catálogo'}
+                    Importar {table === 'clientes' ? 'Directorio' : 'Catálogo'}
                 </h3>
                 {status === 'success' && <CheckCircle className="w-5 h-5 text-emerald-400" />}
                 {status === 'error' && <AlertCircle className="w-5 h-5 text-ceramdent-fucsia" />}
             </div>
 
-            <p className="text-xs text-white/40 mb-6 leading-relaxed">
+            <p className="text-xs text-slate-500 mb-6 leading-relaxed">
                 Sube un archivo Excel (.xlsx) o CSV con las columnas correspondientes
-                ({table === 'clinicas' ? 'doctor_responsable, nombre' : 'nombre_servicio, precio_unitario'}).
+                ({table === 'clientes' ? 'nombre_doctor, nombre_clinica, telefono' : 'nombre, precio'}).
             </p>
 
             <label className={`
@@ -80,8 +80,8 @@ export function ImportData({ table, onComplete }: Props) {
                     <span className="loading loading-spinner text-ceramdent-blue"></span>
                 ) : (
                     <>
-                        <Upload className="w-8 h-8 text-white/20 mb-2" />
-                        <span className="text-sm font-semibold text-white/30 tracking-tight">Elegir archivo</span>
+                        <Upload className="w-8 h-8 text-slate-200 mb-2" />
+                        <span className="text-sm font-semibold text-slate-400 tracking-tight">Elegir archivo</span>
                     </>
                 )}
                 <input

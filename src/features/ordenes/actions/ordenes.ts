@@ -9,21 +9,27 @@ export async function createOrden(prevState: any, formData: FormData) {
     const supabase = createClient()
 
     try {
-        const cliente_id = formData.get('clinica_id') as string // Form still uses clinica_id
+        const cliente_id = formData.get('clinica_id') as string
         const clinica_nombre = formData.get('clinica_nombre') as string
+        const client_documento = formData.get('client_documento') as string
+        const client_nombre_legal = formData.get('client_nombre_legal') as string
+
         const servicio_id = formData.get('servicio_id') as string
         const servicio_nombre = formData.get('servicio_nombre') as string
         const paciente = formData.get('nombre_paciente') as string
+        const codigo_trabajo = formData.get('codigo_trabajo') as string
         const piezas = parseInt(formData.get('piezas') as string || '1')
         const precio_unitario = parseFloat(formData.get('precio_unitario') as string || '0')
         const abono = parseFloat((formData.get('abono') as string) || '0')
         const fecha_entrega = formData.get('fecha_entrega') as string
         const color_id = formData.get('color_id') as string
         const descripcion = formData.get('descripcion') as string
+        const cuotas = parseInt(formData.get('cuotas') as string || '1')
+        const metodo_pago = (formData.get('metodo_pago') as string) || 'Efectivo'
 
         // 1. Resolve Cliente (Clinic)
         let finalClienteId = cliente_id
-        if (!uuidRegex.test(cliente_id)) {
+        if (!uuidRegex.test(cliente_id) || !cliente_id) {
             // Find or create cliente by nombre_doctor
             const { data: existingCliente } = await supabase
                 .from('clientes')
@@ -38,7 +44,8 @@ export async function createOrden(prevState: any, formData: FormData) {
                     .from('clientes')
                     .insert([{
                         nombre_doctor: clinica_nombre,
-                        nombre_clinica: 'Clínica Nueva' // Placeholder
+                        nombre_clinica: client_nombre_legal || 'Clínica Nueva',
+                        telefono: client_documento // Hijacking telefono for documento if no column exists, or just skip it if not in schema
                     }])
                     .select('id')
                     .maybeSingle()
@@ -51,7 +58,7 @@ export async function createOrden(prevState: any, formData: FormData) {
 
         // 2. Resolve Servicio
         let finalServicioId = servicio_id
-        if (!uuidRegex.test(servicio_id)) {
+        if (!uuidRegex.test(servicio_id) || !servicio_id) {
             // Find or create servicio by nombre
             const { data: existingServicio } = await supabase
                 .from('servicios')
@@ -84,7 +91,7 @@ export async function createOrden(prevState: any, formData: FormData) {
         const { data: newOrden, error: oError } = await supabase
             .from('ordenes')
             .insert([{
-                codigo_rastreo: `ORDER-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                codigo_rastreo: codigo_trabajo || `ORDER-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
                 cliente_id: finalClienteId,
                 servicio_id: finalServicioId,
                 piezas,
@@ -99,7 +106,10 @@ export async function createOrden(prevState: any, formData: FormData) {
             .select('id')
             .maybeSingle()
 
-        if (oError) throw oError
+        if (oError) {
+            console.error('Database Error in insert order:', oError)
+            throw new Error(`Error BD: ${oError.message}`)
+        }
         if (!newOrden) throw new Error('No se pudo crear la orden')
 
         // 4. Create Finance Entry (Abono)
@@ -110,14 +120,14 @@ export async function createOrden(prevState: any, formData: FormData) {
                     orden_id: newOrden.id,
                     monto: abono,
                     tipo: 'Ingreso',
-                    concepto: `Abono Inicial - ${paciente}`,
-                    metodo: (formData.get('metodo_pago') as any) || 'Efectivo'
+                    metodo: metodo_pago,
+                    concepto: `Pago inicial (${metodo_pago}) - Paciente: ${paciente}`
                 }])
             if (fError) throw fError
         }
 
-        revalidatePath('/ordenes')
         revalidatePath('/dashboard')
+        revalidatePath('/ordenes')
         return { success: true }
     } catch (error: any) {
         console.error('Error in createOrden:', error)
