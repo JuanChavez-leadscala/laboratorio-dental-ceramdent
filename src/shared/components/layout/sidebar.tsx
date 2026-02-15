@@ -53,7 +53,7 @@ export function Sidebar() {
             {/* Sidebar Overlay/Fixed */}
             <aside
                 className={cn(
-                    "fixed top-0 left-0 h-full w-64 glass-sidebar z-40 transition-transform duration-300 ease-in-out lg:translate-x-0",
+                    "fixed top-0 left-0 h-full w-64 bg-slate-50 border-r border-slate-200 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0",
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 )}
             >
@@ -93,11 +93,11 @@ export function Sidebar() {
                                     className={cn(
                                         "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
                                         isActive
-                                            ? "bg-white/10 text-white border border-white/10"
-                                            : "text-white/50 hover:bg-white/5 hover:text-white"
+                                            ? "bg-white text-slate-800 border border-slate-200 shadow-sm"
+                                            : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
                                     )}
                                 >
-                                    <item.icon size={20} className={isActive ? "text-ceramdent-fucsia" : ""} />
+                                    <item.icon size={20} className={isActive ? "text-ceramdent-blue" : ""} />
                                     <span className="font-medium">{item.label}</span>
                                 </Link>
                             );
@@ -105,23 +105,23 @@ export function Sidebar() {
                     </nav>
 
                     {/* User Section (Footer of Sidebar) */}
-                    <div className="mt-auto pt-6 border-t border-white/10">
+                    <div className="mt-auto pt-6 border-t border-slate-200">
                         <Link href="/perfil" className="block group">
-                            <div className="flex items-center gap-3 mb-6 p-2 rounded-xl hover:bg-white/5 transition-all">
-                                <div className="w-10 h-10 rounded-full bg-ceramdent-blue/10 border border-ceramdent-blue/20 flex items-center justify-center">
-                                    <Users size={20} className="text-ceramdent-blue" />
+                            <div className="flex items-center gap-3 mb-6 p-2 rounded-xl hover:bg-slate-100 transition-all">
+                                <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
+                                    <Users size={20} className="text-slate-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-white truncate">Juan Admin</p>
-                                    <p className="text-xs text-white/40 truncate">Administrador</p>
+                                    <p className="text-sm font-semibold text-slate-800 truncate">Juan Admin</p>
+                                    <p className="text-xs text-slate-400 truncate">Administrador</p>
                                 </div>
-                                <Settings size={16} className="text-white/20 group-hover:text-white/50 transition-colors" />
+                                <Settings size={16} className="text-slate-300 group-hover:text-slate-500 transition-colors" />
                             </div>
                         </Link>
 
                         <button
                             onClick={() => logout()}
-                            className="flex items-center gap-3 px-4 py-3 w-full text-white/50 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
+                            className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                         >
                             <LogOut size={20} />
                             <span className="font-medium">Cerrar Sesión</span>
