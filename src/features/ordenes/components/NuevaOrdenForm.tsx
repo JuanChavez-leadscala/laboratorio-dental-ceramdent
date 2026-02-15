@@ -42,16 +42,16 @@ export function NuevaOrdenForm() {
     useEffect(() => {
         const service = servicios.find((s: any) => s.id === selectedServiceId)
         if (service) {
-            setPrecioUnitario(service.precio_unitario)
-            setServiceQuery(service.nombre_servicio)
-            setServicioNombre(service.nombre_servicio)
+            setPrecioUnitario(service.precio)
+            setServiceQuery(service.nombre)
+            setServicioNombre(service.nombre)
         } else if (!selectedServiceId && serviceQuery) {
             // Check if serviceQuery matches a name exactly
-            const match = servicios.find((s: any) => s.nombre_servicio.toLowerCase() === serviceQuery.toLowerCase())
+            const match = servicios.find((s: any) => s.nombre.toLowerCase() === serviceQuery.toLowerCase())
             if (match) {
                 setSelectedServiceId(match.id)
-                setPrecioUnitario(match.precio_unitario)
-                setServicioNombre(match.nombre_servicio)
+                setPrecioUnitario(match.precio)
+                setServicioNombre(match.nombre)
             }
         }
     }, [selectedServiceId, serviceQuery, servicios])
@@ -67,7 +67,7 @@ export function NuevaOrdenForm() {
     )
 
     const filteredServicios = servicios.filter((s: any) =>
-        s.nombre_servicio.toLowerCase().includes(serviceQuery.toLowerCase())
+        s.nombre.toLowerCase().includes(serviceQuery.toLowerCase())
     ).slice(0, 5)
 
     return (
@@ -189,15 +189,15 @@ export function NuevaOrdenForm() {
                                                     type="button"
                                                     className="text-slate-700 hover:bg-slate-50 flex justify-between items-center"
                                                     onClick={() => {
-                                                        setServiceQuery(s.nombre_servicio)
+                                                        setServiceQuery(s.nombre)
                                                         setSelectedServiceId(s.id)
-                                                        setServicioNombre(s.nombre_servicio)
-                                                        setPrecioUnitario(s.precio_unitario)
+                                                        setServicioNombre(s.nombre)
+                                                        setPrecioUnitario(s.precio)
                                                         setShowServiceResults(false)
                                                     }}
                                                 >
-                                                    <span className="font-medium">{s.nombre_servicio}</span>
-                                                    <span className="text-xs text-slate-400">S/ {s.precio_unitario}</span>
+                                                    <span className="font-medium">{s.nombre}</span>
+                                                    <span className="text-xs text-slate-400">S/ {s.precio}</span>
                                                 </button>
                                             </li>
                                         ))}
@@ -288,7 +288,7 @@ export function NuevaOrdenForm() {
                                     </label>
                                     <input
                                         type="number"
-                                        name="precio_unitario"
+                                        name="precio"
                                         className="input w-full bg-white border-slate-200 text-slate-900 rounded-xl focus:border-ceramdent-blue font-bold"
                                         value={precioUnitario}
                                         onChange={(e) => setPrecioUnitario(parseFloat(e.target.value) || 0)}
