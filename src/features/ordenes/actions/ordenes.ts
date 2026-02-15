@@ -19,7 +19,7 @@ export async function createOrden(prevState: any, formData: FormData) {
         const paciente = formData.get('nombre_paciente') as string
         const codigo_trabajo = formData.get('codigo_trabajo') as string
         const piezas = parseInt(formData.get('piezas') as string || '1')
-        const precio_unitario = parseFloat(formData.get('precio_unitario') as string || '0')
+        const precio = parseFloat(formData.get('precio') as string || '0')
         const abono = parseFloat((formData.get('abono') as string) || '0')
         const fecha_entrega = formData.get('fecha_entrega') as string
         const color_id = formData.get('color_id') as string
@@ -73,7 +73,7 @@ export async function createOrden(prevState: any, formData: FormData) {
                     .from('servicios')
                     .insert([{
                         nombre: servicio_nombre,
-                        precio: precio_unitario
+                        precio: precio
                     }])
                     .select('id')
                     .maybeSingle()
@@ -84,7 +84,7 @@ export async function createOrden(prevState: any, formData: FormData) {
             }
         }
 
-        const monto_total = piezas * precio_unitario
+        const monto_total = piezas * precio
         const saldo_pendiente = monto_total - abono
 
         // 3. Create Orden
